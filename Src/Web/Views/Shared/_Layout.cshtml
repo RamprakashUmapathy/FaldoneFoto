@@ -1,12 +1,21 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8">
+    <meta name="description" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>@ViewData["Title"] - Faldone Foto</title>
+    <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <!-- Title  -->
+    <title>Kasanova S.p.A - @ViewData["Title"]</title>
+    <!-- Favicon  -->
+    <link rel="icon" href="~/favicon.ico">
+    <!-- Core Style CSS -->
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
+        <link rel="stylesheet" href="~/css/core-style.css">
+        <link rel="stylesheet" href="~/css/style.css">
     </environment>
     <environment exclude="Development">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
@@ -18,36 +27,126 @@
     @Html.DevExpress().StyleSheets()
 </head>
 <body>
-    <nav class="navbar mb-4 navbar-expand-md navbar-dark bg-dark">
-        <a asp-controller="Home" asp-action="Index" class="navbar-brand">
-            DevExpress Bootstrap Project
-        </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarMenu" aria-expanded="false">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarMenu">
-            @(Html.DevExpress()
-                .BootstrapMenu()
-                .Name("navigationMenu")
-                .Items(i => {
-                    i.Add()
-                       .NavigateUrl(Url.Action("GridView", "Sample"))
-                       .Text("GridView");
-                    i.Add()
-                       .NavigateUrl(Url.Action("RegisterForm", "Sample"))
-                       .Text("Editors");
-                 })
-                 .SettingsBootstrap(bootstrap => bootstrap.NavbarMode(true)))
+    <!-- Search Wrapper Area Start -->
+    <div class="search-wrapper section-padding-100">
+        <div class="search-close">
+            <i class="fa fa-close" aria-hidden="true"></i>
         </div>
-    </nav>
-    <div class="container">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>Copyright &copy; 2006-@DateTime.Now.Year - Developer Express Inc</p>
-        </footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="search-content">
+                        <input type="search" name="search" id="search" placeholder="Type your keyword...">
+                        <button type="submit"><img src="~/images/search.png" alt=""></button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    <!-- Search Wrapper Area End -->
+    <!-- ##### Main Content Wrapper Start ##### -->
+    <div class="main-content-wrapper d-flex clearfix">
 
+        <!-- Mobile Nav (max width 767px)-->
+        <div class="mobile-nav">
+            <!-- Navbar Brand -->
+            <div class="amado-navbar-brand">
+                <a href="index.html"><img src="~/images/logo_kasanova_top.png" alt=""></a>
+            </div>
+            <!-- Navbar Toggler -->
+            <div class="amado-navbar-toggler">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+
+        <!-- Header Area Start -->
+        <header class="header-area clearfix">
+            <!-- Close Icon -->
+            <div class="nav-close">
+                <i class="fa fa-close" aria-hidden="true"></i>
+            </div>
+            <!-- Logo -->
+            <div class="logo">
+                <a href="@Url.Action("Index", "Home")"><img src="~/images/logo_kasanova_top.png" alt=""></a>
+            </div>
+            <!-- Amado Nav -->
+            <nav class="amado-nav">
+                <ul>
+                    <li>
+                        <a class="nav-link" href="@Url.Action("Index", "Home")">Home</a>
+                    </li>
+                    <li>
+                        <a class="nav-link" href="#">Favourites</a>
+                    </li>
+                    <li>
+                        <a class="nav-link" href="#">Checkout</a>
+                    </li>
+                </ul>
+            </nav>
+            <!-- Cart Menu -->
+            <div class="cart-fav-search mb-100">
+                @*<a href="#" class="cart-nav"><img src="~/images/cart.png" alt=""> Cart <span>(0)</span></a>*@
+                <a href="#" class="fav-nav"><img src="~/images/favorites.png" alt=""> Favourite</a>
+                <a href="#" class="search-nav"><img src="~/images/search.png" alt=""> Search</a>
+            </div>
+            <div class="cart-fav-search mb-100">
+                @RenderSection("sidebar", false)
+            </div>
+        </header>
+        @RenderBody()
+    </div>
+    <!-- ##### Main Content Wrapper End ##### -->
+    <!-- ##### Footer Area Start ##### -->
+    <footer class="footer_area clearfix">
+        <div class="container">
+            <div class="row align-items-center">
+                <!-- Single Widget Area -->
+                <div class="col-12 col-lg-4">
+                    <div class="single_widget_area">
+                        <!-- Logo -->
+                        <div class="footer-logo mr-50">
+                            <a href="index.html"><img src="~/images/logo_kasanova.png" alt=""></a>
+                        </div>
+                        <!-- Copywrite Text -->
+                        <p class="copywrite">
+                            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                            Copyright &copy;
+                            @DateTime.Today.Year All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+                            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                        </p>
+                    </div>
+                </div>
+                <!-- Single Widget Area -->
+                <div class="col-12 col-lg-8">
+                    <div class="single_widget_area">
+                        <!-- Footer Menu -->
+                        <div class="footer_menu">
+                            <nav class="navbar navbar-expand-lg justify-content-end">
+                                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#footerNavContent" aria-controls="footerNavContent" aria-expanded="false" aria-label="Toggle navigation"><i class="fa fa-bars"></i></button>
+                                <div class="collapse navbar-collapse" id="footerNavContent">
+                                    <ul class="navbar-nav ml-auto">
+                                        <li class="nav-item active">
+                                            <a class="nav-link" href="#">Home</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#">Articles</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#">Favourites</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#">Checkout</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- ##### Footer Area End ##### -->
     <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
@@ -55,29 +154,34 @@
         <script src="~/lib/popper.js/dist/umd/popper.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
+        <!-- Plugins js -->
+        <script src="~/js/plugins.js"></script>
+        <!-- Active js -->
+        <script src="~/js/active.js"></script>
     </environment>
     <environment exclude="Development">
-        <script src="https://code.jquery.com/jquery-3.2.1.min.js" 
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"
                 asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
-                asp-fallback-test="window.jQuery" 
+                asp-fallback-test="window.jQuery"
                 integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
                 crossorigin="anonymous">
         </script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
                 asp-fallback-src="~/lib/popper.js/dist/umd/popper.min.js"
-                asp-fallback-test="window.Popper" 
-                integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" 
+                asp-fallback-test="window.Popper"
+                integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
                 crossorigin="anonymous">
         </script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" 
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"
                 asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
                 asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
-                integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" 
+                integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1"
                 crossorigin="anonymous"></script>
         <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
         <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
     @Html.DevExpress().Scripts()
+    @RenderSection("customscripts", false)
 </body>
 </html>

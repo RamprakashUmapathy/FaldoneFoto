@@ -1,17 +1,469 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
+    @model HomeViewModel
+}
+@section sidebar
+    {
+    <section id="SearchParamsByField">
+        <fieldset>
+            <div class="form-group">
+                <label class="small" for="CategoryId">Categoria</label>
+                <div>
+                    @Html.DropDownListFor(model => model.CategoryId, Model.Categories, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="small">Famiglia</label>
+                <div>
+                    @Html.DropDownListFor(model => model.FamilyId, Model.Families, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="small" for="SeriesId">Series</label>
+                <div>
+                    @Html.DropDownListFor(model => model.SeriesId, Model.Series, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="small" for="Level1d">Livello 1</label>
+                <div>
+                    @Html.DropDownListFor(model => model.Level1Id, Model.Level1s, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="small" for="Level2Id">Livello 2</label>
+                <div>
+                    @Html.DropDownListFor(model => model.Level2Id, Model.Level2s, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="small" for="PrivateLabelId">Private Label</label>
+                <div>
+                    @Html.DropDownListFor(model => model.PrivateLabelId, Model.PrivateLabelItems, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="small" for="PrivateLabelId">Disponibile sul web</label>
+                <div>
+                    @Html.DropDownListFor(model => model.WebEnabledId, Model.WebEnabledItems, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="small" for="VideoAvailableId">Video disponibile</label>
+                <div>
+                    @Html.DropDownListFor(model => model.VideoAvailableId, Model.VideoAvailableItems, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="small" for="MandatoryDeliveryId">Ritiro Obbligatorio</label>
+                <div>
+                    @Html.DropDownListFor(model => model.MandatoryDeliveryId, Model.MandatoryDeliveryItems, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="small" for="MandatoryDeliveryId">Magazzino</label>
+                <div>
+                    @Html.DropDownListFor(model => model.WareHouseNameId, Model.WareHouseItems, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="small" for="DirectDeliveryId">Consegna diretta</label>
+                <div>
+                    @Html.DropDownListFor(model => model.DirectDeliveryId, Model.DirectDeliveryItems, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="small" for="ChalcoId">Presenti in Chalco</label>
+                <div>
+                    @Html.DropDownListFor(model => model.ChalcoId, Model.ChalcoItems, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="small" for="PhotoId">Articoli con foto</label>
+                <div>
+                    @Html.DropDownListFor(model => model.PhotoId, Model.PhotoItems, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="small" for="PhotoId">Tipo Colore</label>
+                <div>
+                    @Html.DropDownListFor(model => model.ColorId, Model.ColorItems, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="small" for="StyleItems">Stilo</label>
+                <div>
+                    @(Html.DevExpress()
+                                                                                    .BootstrapListBoxFor(m => m.StyleItems)
+                                                                                    .TextField("Id")
+                                                                                    .ValueField("Id")
+                                                                                    .Caption("")
+                                                                                    .Bind(Model.StyleItems)
+                                                                                    .EnableClientSideAPI(true)
+                                                                                    .EnableSelectAll(true)
+                                                                                    .SelectionMode(ListEditSelectionMode.CheckColumn)
+                                                                                    .FilteringSettings(f => f.ShowSearchUI(true).UseCompactView(true))
+                    )
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="small" for="StyleItems">Listino vendita</label>
+                <div>
+                    @(Html.DevExpress()
+                                                                                    .BootstrapListBoxFor(m => m.PriceListId)
+                                                                                    .TextField("Id")
+                                                                                    .ValueField("Id")
+                                                                                    .Caption("")
+                                                                                    .Bind(Model.PriceListItems)
+                                                                                    .EnableClientSideAPI(true)
+                                                                                    .EnableSelectAll(true)
+                                                                                    .SelectionMode(ListEditSelectionMode.CheckColumn)
+                                                                                    .FilteringSettings(f => f.ShowSearchUI(true).UseCompactView(true))
+                    )
+                </div>
+            </div>
+            <label for="supplyStatus">Approvvigionamento</label>
+            <div class="form-group">
+                <label class="small" for="StyleItems">Listino vendita</label>
+                <div>
+                    @(Html.DevExpress()
+                                                                                    .BootstrapListBoxFor(m => m.SupplyStatusId)
+                                                                                    .TextField("Id")
+                                                                                    .ValueField("Id")
+                                                                                    .Caption("")
+                                                                                    .Bind(Model.SupplyStatusItems)
+                                                                                    .EnableClientSideAPI(true)
+                                                                                    .EnableSelectAll(true)
+                                                                                    .SelectionMode(ListEditSelectionMode.CheckColumn)
+                                                                                    .FilteringSettings(f => f.ShowSearchUI(true).UseCompactView(true))
+                    )
+                </div>
+            </div>
+            <label for="assortment">Assortimenti</label>
+            <div class="form-group">
+                <label class="small" for="StyleItems">Assortimenti</label>
+                <div>
+                    @(Html.DevExpress()
+                                                                                    .BootstrapListBoxFor(m => m.StockGroupId)
+                                                                                    .TextField("Id")
+                                                                                    .ValueField("Id")
+                                                                                    .Caption("")
+                                                                                    .Bind(Model.StockGroupItems)
+                                                                                    .EnableClientSideAPI(true)
+                                                                                    .EnableSelectAll(true)
+                                                                                    .SelectionMode(ListEditSelectionMode.CheckColumn)
+                                                                                    .FilteringSettings(f => f.ShowSearchUI(true).UseCompactView(true))
+                    )
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="small" for="StyleItems">Tag commericiale</label>
+                <div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="small" for="StyleItems">Prezzo</label>
+                <div class="row">
+                    <div class="col">
+                        @(Html.DevExpress()
+                                                                        .BootstrapSpinEditFor(m => m.PriceRangeFrom)
+                                                                        .AllowMouseWheel(false)
+                                                                        .MinValue(0)
+                                                                        .MaxValue(99999.99m)
+                                                                        .DecimalPlaces(2)
+                                                                        .NumberType(SpinEditNumberType.Float)
+                                                                        .Increment(10)
+                                                                        .Caption("Da :")
+                                                                        .AllowNull(true)
+                                                                        .SpinButtons(o => o.ShowIncrementButtons(false))
+                                                                        .Value("")
+                        )
+                    </div>
+                    <div class="col">
+                        @(Html.DevExpress()
+                                                                        .BootstrapSpinEditFor(m => m.PriceRangeTo)
+                                                                        .AllowMouseWheel(false)
+                                                                        .MinValue(0)
+                                                                        .MaxValue(99999.99m)
+                                                                        .Increment(10)
+                                                                        .DecimalPlaces(2)
+                                                                        .NumberType(SpinEditNumberType.Float)
+                                                                        .Caption("a :")
+                                                                        .AllowNull(true)
+                                                                        .SpinButtons(o => o.ShowIncrementButtons(false))
+                                                                        .Value("")
+                        )
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="small" for="StyleItems">Sconto minimo (%):</label>
+                <div class="row">
+                    <div class="col">
+                        @(Html.DevExpress()
+                                                                        .BootstrapSpinEditFor(m => m.DiscountFrom)
+                                                                        .AllowMouseWheel(false)
+                                                                        .MinValue(0)
+                                                                        .MaxValue(99.99m)
+                                                                        .DecimalPlaces(2)
+                                                                        .NumberType(SpinEditNumberType.Float)
+                                                                        .Increment(1)
+                                                                        .Caption("Da :")
+                                                                        .AllowNull(true)
+                                                                        .SpinButtons(o => o.ShowIncrementButtons(false))
+                                                                        .Value("")
+                        )
+                    </div>
+                    <div class="col">
+                        @(Html.DevExpress()
+                                                                        .BootstrapSpinEditFor(m => m.DiscountTo)
+                                                                        .AllowMouseWheel(false)
+                                                                        .MinValue(0)
+                                                                        .MaxValue(99.99m)
+                                                                        .DecimalPlaces(2)
+                                                                        .NumberType(SpinEditNumberType.Float)
+                                                                        .Increment(1)
+                                                                        .Caption("a :")
+                                                                        .AllowNull(true)
+                                                                        .SpinButtons(o => o.ShowIncrementButtons(false))
+                                                                        .Value("")
+                        )
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="small" for="StyleItems">Disponibilità da:</label>
+                <div class="row">
+                    <div class="col">
+                        @(Html.DevExpress()
+                                                                        .BootstrapSpinEditFor(m => m.StockQty)
+                                                                        .AllowMouseWheel(false)
+                                                                        .MinValue(0)
+                                                                        .MaxValue(99999)
+                                                                        .DecimalPlaces(2)
+                                                                        .NumberType(SpinEditNumberType.Integer)
+                                                                        .Increment(10)
+                                                                        .Caption("")
+                                                                        .AllowNull(true)
+                                                                        .SpinButtons(o => o.ShowIncrementButtons(false))
+                                                                        .Value("")
+                        )
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset>
+            <button type="submit" class="btn btn-default">
+                <span class="glyphicon glyphicon-filter" title="Applica Filtro" />Applica
+            </button>
+        </fieldset>
+    </section>
+}
+<!-- Articles Start -->
+<div class="products-catagories-area clearfix">
+    <div class="amado-pro-catagory clearfix">
+        <!-- Single Catagory -->
+        <div class="single-products-catagory clearfix">
+            <a href="shop.html">
+                <img src="http://server-web01:8083/WSPhoto.ashx?Articolo=ACK010062NOC&amp;UseNoThumb=1" alt="">
+                <!-- Hover Content -->
+                <div class="hover-content">
+                    <div class="line"></div>
+                    <p>From $318</p>
+                    <h4>Home Deco</h4>
+                </div>
+            </a>
+        </div>
+        <div class="single-products-catagory clearfix">
+            <a href="shop.html">
+                <img src="http://server-web01:8083/WSPhoto.ashx?Articolo=ACK010062NOC&amp;UseNoThumb=1" alt="">
+                <!-- Hover Content -->
+                <div class="hover-content">
+                    <div class="line"></div>
+                    <p>From $318</p>
+                    <h4>Home Deco</h4>
+                </div>
+            </a>
+        </div>
+        <div class="single-products-catagory clearfix">
+            <a href="shop.html">
+                <img src="http://server-web01:8083/WSPhoto.ashx?Articolo=ACK010062NOC&amp;UseNoThumb=1" alt="">
+                <!-- Hover Content -->
+                <div class="hover-content">
+                    <div class="line"></div>
+                    <p>From $318</p>
+                    <h4>Home Deco</h4>
+                </div>
+            </a>
+        </div>
+        <div class="single-products-catagory clearfix">
+            <a href="shop.html">
+                <img src="http://server-web01:8083/WSPhoto.ashx?Articolo=ACK010062NOC&amp;UseNoThumb=1" alt="">
+                <!-- Hover Content -->
+                <div class="hover-content">
+                    <div class="line"></div>
+                    <p>From $318</p>
+                    <h4>Home Deco</h4>
+                </div>
+            </a>
+        </div>
+        <div class="single-products-catagory clearfix">
+            <a href="shop.html">
+                <img src="http://server-web01:8083/WSPhoto.ashx?Articolo=ACK010062NOC&amp;UseNoThumb=1" alt="">
+                <!-- Hover Content -->
+                <div class="hover-content">
+                    <div class="line"></div>
+                    <p>From $318</p>
+                    <h4>Home Deco</h4>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+<!-- Articles End -->
+@section customscripts
+    {
+    <script>
+        $(document).ready(function () {
+        $("#CategoryId").change(
+            function (e) {
+                // Category.
+                var category = $(this).val();
+                var uri = "/api/categories/" + category + "/families";
+                $.getJSON(uri)
+                    .done(function (data) {
+                        //console.log(data);
+                        var family = $("#FamilyId");
+                        $(family).empty();
+                        $(family).append($("<option value=''>@Model.EmptyItemText</option>"));
+
+                        var series = $("#SeriesId");
+                        $(series).empty();
+                        $(series).append($("<option value=''>@Model.EmptyItemText</option>"));
+
+                        var level1 = $("#Level1Id");
+                        $(level1).empty();
+                        $(level1).append($("<option value=''>@Model.EmptyItemText</option>"));
+
+                        var level2 = $("#Level2Id");
+                        $(level2).empty();
+                        $(level2).append($("<option value=''>@Model.EmptyItemText</option>"));
+
+                        $.each(data,
+                            function (key, value) {
+                                $(family).append($("<option></option>")
+                                    .attr("value", value.id)
+                                    .text(value.id));
+                                //$.each(value.series,
+                                //    function (key, value) {
+                                //        $(series).append($("<option></option>")
+                                //            .attr("value", value.id)
+                                //            .text(value.id));
+                                //    });
+                            });
+                    });
+            });
+
+        $("#FamilyId").change(
+            function (e) {
+                // Family.
+                var category = $("#CategoryId").val();
+                var family = $(this).val();
+                var uri = "/api/categories/" + category + "/families/" + family + "/series";
+                $.getJSON(uri)
+                    .done(function (data) {
+
+                        var series = $("#SeriesId");
+                        $(series).empty();
+                        $(series).append($("<option value=''>@Model.EmptyItemText</option>"));
+
+                        var level1 = $("#Level1Id");
+                        $(level1).empty();
+                        $(level1).append($("<option value=''>@Model.EmptyItemText</option>"));
+
+                        var level2 = $("#Level2Id");
+                        $(level2).empty();
+                        $(level2).append($("<option value=''>@Model.EmptyItemText</option>"));
+
+                        $.each(data,
+                            function (key, value) {
+                                $(series).append($("<option></option>")
+                                    .attr("value", value.id)
+                                    .text(value.id));
+                            });
+                    });
+            });
+
+        $("#SeriesId").change(
+            function (e) {
+                var category = $("#CategoryId").val();
+                var family = $("#FamilyId").val();
+                var series = $(this).val();
+                var uri = "/api/categories/" + category + "/families/" + family + "/series/" + series + "/level1";
+                $.getJSON(uri)
+                    .done(function (data) {
+                        var level1 = $("#Level1Id");
+                        $(level1).empty();
+                        $(level1).append($("<option value=''>@Model.EmptyItemText</option>"));
+
+                        var level2 = $("#Level2Id");
+                        $(level2).empty();
+                        $(level2).append($("<option value=''>@Model.EmptyItemText</option>"));
+
+                        $.each(data,
+                            function (key, value) {
+                                $(level1).append($("<option></option>")
+                                    .attr("value", value.id)
+                                    .text(value.id));
+                            });
+                    });
+            });
+
+        $("#Level1Id").change(
+            function (e) {
+                var category = $("#CategoryId").val();
+                var family = $("#FamilyId").val();
+                var series = $("#SeriesId").val();
+                var level1 = $(this).val();
+                var uri = "/api/categories/" + category + "/families/" + family + "/series/" + series + "/level1/" + level1 + "/level2";
+                $.getJSON(uri)
+                    .done(function (data) {
+                        var level2 = $("#Level2Id");
+                        $(level2).empty();
+                        $(level2).append($("<option value=''>@Model.EmptyItemText</option>"));
+                        $.each(data,
+                            function (key, value) {
+                                $(level2).append($("<option></option>")
+                                    .attr("value", value.id)
+                                    .text(value.id));
+                            });
+                    });
+            });
+
+        $("#Level2Id").change(
+            function (e) {
+                var category = $("#CategoryId").val();
+                var family = $("#FamilyId").val();
+                var series = $("#SeriesId").val();
+                var level1 = $("#Level1Id").val();
+                var level2 = $(this).val()
+                var uri = "/api/categories/" + category + "/families/" + family + "/series/" + series + "/level1/" + level1 + "/level2/" + level2 + "/styles";
+                $.getJSON(uri)
+                    .done(function (data) {
+                        console.log(data);
+                        var style = $("#StyleId");
+                        $(style).empty();
+                        $(style).append($("<option value=''>@Model.EmptyItemText</option>"));
+                        $.each(data,
+                            function (key, value) {
+                                $(style).append($("<option></option>")
+                                    .attr("value", value.id)
+                                    .text(value.id));
+                            });
+                    });
+            });
+
+    });
+    </script>
 }
 
-<div class="jumbotron">
-  <h1 class="display-3">Hello, world!</h1>
-  <p class="lead">A boilerplate for ASP.NET Core MVC projects using the DevExpress Bootstrap Controls.</p>
-  <hr class="my-4">
-      <p>
-      This project demonstrates how to use DevExpress Bootstrap Controls in an ASP.NET Core application. 
-      If you would prefer to delete sample data from this project, remove the following files and folders: <code>Controllers/SampleController.cs</code>, <code>Data</code>, <code>Models/NorthwindContext.cs</code>, <code>Models/Person.cs</code>, <code>Views/Sample</code>.
-      </p>
-  <p>Please provide us feedback via the <a href="https://www.devexpress.com/Support/Center/Question/Create">DevExpress Support Center</a>.</p>
-  <p class="lead">
-    <a class="btn btn-primary btn-lg" href="https://demos.devexpress.com/aspnetcore-bootstrap" role="button" target="_blank">See Demos</a>
-  </p>
-</div>
