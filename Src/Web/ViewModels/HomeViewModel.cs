@@ -27,7 +27,7 @@ namespace Web.ViewModels
 
         public string CategoryId { get; set; }
 
-        public IEnumerable<SelectListItem> Categories { get; private set; }
+        public List<SelectListItem> Categories { get; private set; }
 
         public string FamilyId { get; set; }
 
@@ -143,13 +143,13 @@ namespace Web.ViewModels
             var emptyList = new List<SelectListItem>()  { emptyItem };
 
             this.EmptyItemText = emptyItemText;
-            this.Categories = emptyList;
+            //this.Categories = emptyList;
             this.Families = emptyList;
             this.Series = emptyList;
             this.Level1s = emptyList;
             this.Level2s = emptyList;
             this.PrivateLabelItems = emptyList;
-            this.Categories = Data.ToSelectListItems(CategoryId, emptyItem);
+            this.Categories = Data.ToSelectListItems(CategoryId, emptyItem).ToList();
 
             this.PrivateLabelItems = await GetItems("PrivateLabel", PrivateLabelId, new SelectListItem() { Text = EmptyItemText, Value = "" });
             this.WebEnabledItems = await GetItems("WebEnabled", WebEnabledId, new SelectListItem() { Text = EmptyItemText, Value = "" });

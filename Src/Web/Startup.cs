@@ -1,4 +1,5 @@
-﻿using DevExpress.AspNetCore;
+﻿using DevExpress.AspNetCore.Bootstrap;
+using DevExpress.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
