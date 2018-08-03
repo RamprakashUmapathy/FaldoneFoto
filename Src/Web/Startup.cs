@@ -8,6 +8,7 @@ using Kasanova.FaldoneFoto.Infrastructure.Data;
 using Kasanova.FaldoneFoto.Infrastructure.Enums;
 using Kasanova.Common.ApplicationCore.Interfaces;
 using Infrastructure.Logging;
+using Web.Services;
 
 namespace DevExpressStarterProject
 {
@@ -34,9 +35,10 @@ namespace DevExpressStarterProject
             services.AddScoped(typeof(IAppLogger<>), typeof(LoggerAdapter<>));
 
             // IoC for repositories
-            DataContext dataContext = new DataContext(ConnectDB.LocalDB, Configuration);
-            services.AddScoped<IKeyItemValueRepository>(s => new KeyItemValueRepository(dataContext));
-            services.AddScoped<ICategoryRepository>(s => new CategoryRepository(dataContext));
+            services.AddScoped<IUnitOfWork, DataContext>();
+            services.AddScoped<IKeyItemValueRepository, KeyItemValueRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepositoryCache>();
+            services.AddScoped<IArticleRepository, ArticleRepositoryCache>();
 
             services.AddMvc();
             services.AddDevExpressControls();

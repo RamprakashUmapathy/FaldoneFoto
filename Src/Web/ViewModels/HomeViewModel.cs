@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -99,7 +100,7 @@ namespace Web.ViewModels
 
         public string StyleId { get; set; }
 
-        public IEnumerable<Style> StyleItems { get; private set; }
+        public IEnumerable<SelectListItem> StyleItems { get; private set; }
 
         public double PriceRangeFrom { get; set; }
 
@@ -123,49 +124,45 @@ namespace Web.ViewModels
 
         public async Task<HomeViewModel> Load()
         {
-            HttpResponseMessage response = await Client.GetAsync("Categories");
-            if (response.IsSuccessStatusCode)
+            using (HttpResponseMessage response = await Client.GetAsync("Categories"))
             {
+                response.EnsureSuccessStatusCode();
                 var data = await response.Content.ReadAsStringAsync();
                 var settings = new JsonSerializerSettings
                 {
                     ContractResolver = new PrivateSetterContractResolver()
                 };
                 this.Data = JsonConvert.DeserializeObject<IEnumerable<Category>>(data, settings);
+
+                string emptyItemText = await GetItem("EmptyItemSelect");
+                var emptyItem = new SelectListItem() { Text = emptyItemText, Value = "" };
+                var emptyList = new List<SelectListItem>() { emptyItem };
+
+                this.EmptyItemText = emptyItemText;
+                this.Categories = emptyList;
+                this.Families = emptyList;
+                this.Series = emptyList;
+                this.Level1s = emptyList;
+                this.Level2s = emptyList;
+                this.PrivateLabelItems = emptyList;
+                this.Categories = Data.ToSelectListItems(CategoryId, emptyItem);
+
+                this.PrivateLabelItems = await GetItems("PrivateLabel", PrivateLabelId, new SelectListItem() { Text = EmptyItemText, Value = "" });
+                this.WebEnabledItems = await GetItems("WebEnabled", WebEnabledId, new SelectListItem() { Text = EmptyItemText, Value = "" });
+                this.VideoAvailableItems = await GetItems("VideoAvailable", VideoAvailableId, new SelectListItem() { Text = EmptyItemText, Value = "" });
+                this.MandatoryDeliveryItems = await GetItems("MandatoryDelivery", MandatoryDeliveryId, new SelectListItem() { Text = EmptyItemText, Value = "" });
+                this.WareHouseItems = await GetItems("WareHouseName", WareHouseNameId, new SelectListItem() { Text = EmptyItemText, Value = "" });
+                this.DirectDeliveryItems = await GetItems("DirectDelivery", DirectDeliveryId, new SelectListItem() { Text = EmptyItemText, Value = "" });
+                this.ChalcoItems = await GetItems("InChalco", ChalcoId, new SelectListItem() { Text = EmptyItemText, Value = "" });
+                this.PhotoItems = await GetItems("HasPhoto", PhotoId, new SelectListItem() { Text = EmptyItemText, Value = "" });
+                this.ColorItems = await GetItems("Color", ColorId, new SelectListItem() { Text = EmptyItemText, Value = "" });
+                this.StyleItems = Data.GetStyles().ToSelectListItems(StyleId); //.ToSelectListItems(StyleId, emptyItem);
+                this.PriceListItems = Data.GetPriceLists();
+                this.SupplyStatusItems = Data.GetSupplyStatuses();
+                this.StockGroupItems = Data.GetStockGroups();
+
+                return this;
             }
-            else
-            {
-                throw new HttpRequestException(response.ReasonPhrase);
-            }
-
-            string emptyItemText = await GetItem("EmptyItemSelect");
-            var emptyItem = new SelectListItem() { Text = emptyItemText, Value = "" };
-            var emptyList = new List<SelectListItem>()  { emptyItem };
-
-            this.EmptyItemText = emptyItemText;
-            this.Categories = emptyList;
-            this.Families = emptyList;
-            this.Series = emptyList;
-            this.Level1s = emptyList;
-            this.Level2s = emptyList;
-            this.PrivateLabelItems = emptyList;
-            this.Categories = Data.ToSelectListItems(CategoryId, emptyItem);
-
-            this.PrivateLabelItems = await GetItems("PrivateLabel", PrivateLabelId, new SelectListItem() { Text = EmptyItemText, Value = "" });
-            this.WebEnabledItems = await GetItems("WebEnabled", WebEnabledId, new SelectListItem() { Text = EmptyItemText, Value = "" });
-            this.VideoAvailableItems = await GetItems("VideoAvailable", VideoAvailableId, new SelectListItem() { Text = EmptyItemText, Value = "" });
-            this.MandatoryDeliveryItems = await GetItems("MandatoryDelivery", MandatoryDeliveryId, new SelectListItem() { Text = EmptyItemText, Value = "" });
-            this.WareHouseItems = await GetItems("WareHouseName", WareHouseNameId, new SelectListItem() { Text = EmptyItemText, Value = "" });
-            this.DirectDeliveryItems = await GetItems("DirectDelivery", DirectDeliveryId, new SelectListItem() { Text = EmptyItemText, Value = "" });
-            this.ChalcoItems = await GetItems("InChalco", ChalcoId, new SelectListItem() { Text = EmptyItemText, Value = "" });
-            this.PhotoItems = await GetItems("HasPhoto", PhotoId, new SelectListItem() { Text = EmptyItemText, Value = "" });
-            this.ColorItems = await GetItems("Color", ColorId, new SelectListItem() { Text = EmptyItemText, Value = "" });
-            this.StyleItems = Data.GetStyles(); //.ToSelectListItems(StyleId, emptyItem);
-            this.PriceListItems = Data.GetPriceLists();
-            this.SupplyStatusItems = Data.GetSupplyStatuses();
-            this.StockGroupItems = Data.GetStockGroups();
-
-            return this;
         }
 
         private async Task<string> GetItem(string keyId)
@@ -219,6 +216,7 @@ namespace Web.ViewModels
         public void Dispose()
         {
             Client.Dispose();
+            Debug.WriteLine("Dispose called");
         }
     }
 }

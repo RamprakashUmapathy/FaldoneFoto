@@ -2,6 +2,7 @@
 using Kasanova.FaldoneFoto.ApplicationCore.Entities;
 using Kasanova.FaldoneFoto.Infrastructure.Data;
 using Microsoft.Extensions.Caching.Memory;
+using System;
 using System.Threading.Tasks;
 
 namespace Web.Services
@@ -11,18 +12,19 @@ namespace Web.Services
         private IMemoryCache _cache;
         private const string cacheKey = "Kasanova.FaldoneFoto.TreeViewData.{0}.{1}";
 
-        public CategoryRepositoryCache(DataContext context, IMemoryCache memoryCache) : base(context) { }
+        public CategoryRepositoryCache(IUnitOfWork context, IMemoryCache memoryCache) : base(context)
+        {
+            _cache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
+        }
 
         public new async Task<PaginationInfo<Category>> ListAllAsync(int pageSize, int pageNumber)
         {
-            object key = string.Format(cacheKey,pageSize, pageNumber);
-            PaginationInfo<Category> repositoryCache = _cache.Get<PaginationInfo<Category>>(key);
-            if (repositoryCache == null)
+            object key = string.Format(cacheKey, pageSize, pageNumber);
+            var repositoryCache = await _cache.GetOrCreateAsync(key, async item =>
             {
-                repositoryCache = await base.ListAllAsync(pageSize, pageNumber);
-                var cacheEntry = _cache.CreateEntry(key);
-                cacheEntry.Value = repositoryCache;
-            }
+                var categories = await base.ListAllAsync(pageSize, pageNumber);
+                return await Task.FromResult<PaginationInfo<Category>>(categories);
+            });
             return repositoryCache;
         }
 

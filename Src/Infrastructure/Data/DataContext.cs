@@ -33,7 +33,6 @@ namespace Kasanova.FaldoneFoto.Infrastructure.Data
             }
         }
 
-        //Do not make Dispose() virtual - you should prevent subclasses from overriding
         public void Dispose()
         {
             lock (this)
@@ -49,6 +48,7 @@ namespace Kasanova.FaldoneFoto.Infrastructure.Data
                 }
             }
         }
+
         protected virtual void Cleanup()
         {
             if (mConnection != null) { mConnection.Close(); }
@@ -62,26 +62,9 @@ namespace Kasanova.FaldoneFoto.Infrastructure.Data
         }
 
 
-        public DataContext(ConnectDB connectionName, IConfiguration configuration)
+        public DataContext(IConfiguration configuration)
         {
-            string name = null;
-            switch (connectionName)
-            {
-                case ConnectDB.SqlServerNegozi:
-                    {
-                        throw new NotSupportedException();
-                    }
-                case ConnectDB.LocalDB:
-                    {
-                        name = "FaldoneFotoConnection";
-                        break;
-                    }
-                case ConnectDB.ServerDWH:
-                    throw new NotSupportedException();
-                default:
-                    throw new NotSupportedException();
-            }
-            mConnectionString = configuration.GetConnectionString(name);
+            mConnectionString = configuration.GetConnectionString("FaldoneFotoConnection");
         }
 
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))

@@ -10,16 +10,16 @@ There's also [a docker image](https://hub.docker.com/r/devexpress/bootstrap-aspn
 2. Clone the demo project. 
 3. Open the project's root folder.
 4. Open Console and type the following commands in it:
-   - `dotnet restore`
-   - `dotnet run`
+   - 'dotnet restore'
+   - 'dotnet run'
  
 ## Run in Docker 
 1. [Get Docker](https://docs.docker.com/engine/installation/)
-2. `docker run --rm -ti -p 5000:5000 devexpress/bootstrap-aspnetcore-starter`
+2. 'docker run --rm -ti -p 5000:5000 devexpress/bootstrap-aspnetcore-starter'
 3. Navigate to http://localhost:5000
  
 ## A Boilerplate-only Option 
-If you would prefer to delete sample data from this project, remove the following files and folders: `Controllers/SampleController.cs`, `Data`, `Models/NorthwindContext.cs`, `Models/Person.cs`, `Views/Sample`.
+If you would prefer to delete sample data from this project, remove the following files and folders: 'Controllers/SampleController.cs', 'Data', 'Models/NorthwindContext.cs', 'Models/Person.cs', 'Views/Sample'.
  
 ## Online demos 
 Visit our [ASP.NET Core Bootstrap demos](https://demos.devexpress.com/aspnetcore-bootstrap) to see what components are already available. Use them in the attached sample project to see how they work on your side. 

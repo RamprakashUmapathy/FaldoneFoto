@@ -24,7 +24,7 @@
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
     </environment>
-    @Html.DevExpress().StyleSheets()
+    @RenderSection("customstyles", false)
 </head>
 <body>
     <!-- Search Wrapper Area Start -->
@@ -46,19 +46,17 @@
     <!-- Search Wrapper Area End -->
     <!-- ##### Main Content Wrapper Start ##### -->
     <div class="main-content-wrapper d-flex clearfix">
-
         <!-- Mobile Nav (max width 767px)-->
         <div class="mobile-nav">
             <!-- Navbar Brand -->
             <div class="amado-navbar-brand">
-                <a href="index.html"><img src="~/images/logo_kasanova_top.png" alt=""></a>
+                <a href="@Url.Action("Index", "Home")"><img src="~/images/logo_kasanova_top.png" alt=""></a>
             </div>
             <!-- Navbar Toggler -->
             <div class="amado-navbar-toggler">
                 <span></span><span></span><span></span>
             </div>
         </div>
-
         <!-- Header Area Start -->
         <header class="header-area clearfix">
             <!-- Close Icon -->

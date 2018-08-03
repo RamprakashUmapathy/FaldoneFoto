@@ -20,9 +20,9 @@ namespace Kasanova.FaldoneFoto.Infrastructure.Data
     public class KeyItemValueRepository : BaseRepository, IKeyItemValueRepository
     {
 
-        public DataContext DataContext { get; }
+        public IUnitOfWork DataContext { get; }
 
-        public KeyItemValueRepository(DataContext context)
+        public KeyItemValueRepository(IUnitOfWork context)
         {
             DataContext = context ?? throw new ArgumentNullException(nameof(context));
         }

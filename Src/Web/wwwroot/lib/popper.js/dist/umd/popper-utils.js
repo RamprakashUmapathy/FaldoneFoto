@@ -66,12 +66,12 @@ function getParentNode(element) {
  * @returns {Element} scroll parent
  */
 function getScrollParent(element) {
-  // Return body, `getScroll` will take care to get the correct `scrollTop` from it
+  // Return body, 'getScroll' will take care to get the correct 'scrollTop' from it
   if (!element || ['HTML', 'BODY', '#document'].indexOf(element.nodeName) !== -1) {
     return window.document.body;
   }
 
-  // Firefox want us to check `-x` and `-y` variations as well
+  // Firefox want us to check '-x' and '-y' variations as well
 
   var _getStyleComputedProp = getStyleComputedProperty(element),
       overflow = _getStyleComputedProp.overflow,
@@ -183,7 +183,7 @@ function findCommonOffsetParent(element1, element2) {
  * @method
  * @memberof Popper.Utils
  * @argument {Element} element
- * @argument {String} side `top` or `left`
+ * @argument {String} side 'top' or 'left'
  * @returns {number} amount of scrolled pixels
  */
 function getScroll(element) {
@@ -228,8 +228,8 @@ function includeScroll(rect, element) {
  * @method
  * @memberof Popper.Utils
  * @param {CSSStyleDeclaration} styles
- * Result of `getStyleComputedProperty` on the given element
- * @param {String} axis - `x` or `y`
+ * Result of 'getStyleComputedProperty' on the given element
+ * @param {String} axis - 'x' or 'y'
  * @return {number} borders - The borders size of the given axis
  */
 
@@ -340,7 +340,7 @@ function getBoundingClientRect(element) {
   var horizScrollbar = element.offsetWidth - width;
   var vertScrollbar = element.offsetHeight - height;
 
-  // if an hypothetical scrollbar is detected, we must be sure it's not a `border`
+  // if an hypothetical scrollbar is detected, we must be sure it's not a 'border'
   // we make this check conditional for performance reasons
   if (horizScrollbar || vertScrollbar) {
     var styles = getStyleComputedProperty(element);
@@ -504,7 +504,7 @@ function getArea(_ref) {
 }
 
 /**
- * Utility used to transform the `auto` placement to the placement with more
+ * Utility used to transform the 'auto' placement to the placement with more
  * available space.
  * @method
  * @memberof Popper.Utils
@@ -643,7 +643,7 @@ var supportsNativeMutationObserver = isBrowser && isNative(window.MutationObserv
 var debounce = supportsNativeMutationObserver ? microtaskDebounce : taskDebounce;
 
 /**
- * Mimics the `find` method of Array
+ * Mimics the 'find' method of Array
  * @method
  * @memberof Popper.Utils
  * @argument {Array} arr
@@ -657,7 +657,7 @@ function find(arr, check) {
     return arr.find(check);
   }
 
-  // use `filter` to obtain the same behavior of `find`
+  // use 'filter' to obtain the same behavior of 'find'
   return arr.filter(check)[0];
 }
 
@@ -678,7 +678,7 @@ function findIndex(arr, prop, value) {
     });
   }
 
-  // use `find` + `indexOf` if `findIndex` isn't supported
+  // use 'find' + 'indexOf' if 'findIndex' isn't supported
   var match = find(arr, function (obj) {
     return obj[prop] === value;
   });
@@ -690,7 +690,7 @@ function findIndex(arr, prop, value) {
  * @method
  * @memberof Popper.Utils
  * @param {Element} element
- * @return {Object} position - Coordinates of the element and its `scrollTop`
+ * @return {Object} position - Coordinates of the element and its 'scrollTop'
  */
 function getOffsetRect(element) {
   var elementRect = void 0;
@@ -871,8 +871,8 @@ function isModifierRequired(modifiers, requestingName, requestedName) {
   });
 
   if (!isRequired) {
-    var _requesting = '`' + requestingName + '`';
-    var requested = '`' + requestedName + '`';
+    var _requesting = ''' + requestingName + ''';
+    var requested = ''' + requestedName + ''';
     console.warn(requested + ' modifier is required by ' + _requesting + ' modifier in order to work, be sure to include it before ' + _requesting + '!');
   }
   return isRequired;
@@ -927,7 +927,7 @@ function runModifiers(modifiers, data, ends) {
 
   modifiersToRun.forEach(function (modifier) {
     if (modifier.function) {
-      console.warn('`modifier.function` is deprecated, use `modifier.fn`!');
+      console.warn(''modifier.function' is deprecated, use 'modifier.fn'!');
     }
     var fn = modifier.function || modifier.fn;
     if (modifier.enabled && isFunction(fn)) {
@@ -1015,9 +1015,9 @@ function setupEventListeners(reference, options, state, updateBound) {
 
 // This is here just for backward compatibility with versions lower than v1.10.3
 // you should import the utilities using named exports, if you want them all use:
-// ```
+// '''
 // import * as PopperUtils from 'popper-utils';
-// ```
+// '''
 // The default export will be removed in the next major version.
 var index = {
   computeAutoPlacement: computeAutoPlacement,

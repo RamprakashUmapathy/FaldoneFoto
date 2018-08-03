@@ -16,9 +16,9 @@ namespace Kasanova.FaldoneFoto.Infrastructure.Data
 
     public class ArticleRepository : BaseRepository, IArticleRepository
     {
-        public DataContext DataContext { get; }
+        public IUnitOfWork DataContext { get; }
 
-        public ArticleRepository(DataContext context)
+        public ArticleRepository(IUnitOfWork context)
         {
             DataContext = context ?? throw new ArgumentNullException(nameof(context));
         }

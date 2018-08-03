@@ -63,14 +63,13 @@ namespace Web.Controllers
 
         // POST: Home
         [HttpPost]
-        public async Task<IActionResult> Post()
+        public async Task<IActionResult> Post(HomeViewModel model)
         {
             await Task.Delay(1);
             throw new NotImplementedException();
         }
 
         #region Private methods
-
 
         private async Task<IEnumerable<Category>> GetCategories()
         {
@@ -82,22 +81,14 @@ namespace Web.Controllers
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
                 HttpResponseMessage response = await client.GetAsync("Categories");
-                if (response.IsSuccessStatusCode)
+                response.EnsureSuccessStatusCode();
+                var data = await response.Content.ReadAsStringAsync();
+                var settings = new JsonSerializerSettings
                 {
-                    var data = await response.Content.ReadAsStringAsync();
-                    var settings = new JsonSerializerSettings
-                    {
-                        ContractResolver = new PrivateSetterContractResolver()
-                    };
-                    var results = JsonConvert.DeserializeObject<IEnumerable<Category>>(data, settings);
-                    return results;
-
-                }
-                else
-                {
-                    await Task.Delay(100);
-                    throw new HttpRequestException(response.ReasonPhrase);
-                }
+                    ContractResolver = new PrivateSetterContractResolver()
+                };
+                var results = JsonConvert.DeserializeObject<IEnumerable<Category>>(data, settings);
+                return results;
             }
         }
 
@@ -114,28 +105,21 @@ namespace Web.Controllers
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
                 HttpResponseMessage response = await client.GetAsync("KeyItems/" + keyId);
-                if (response.IsSuccessStatusCode)
+                response.EnsureSuccessStatusCode();
+                var data = await response.Content.ReadAsStringAsync();
+                var settings = new JsonSerializerSettings
                 {
-                    var data = await response.Content.ReadAsStringAsync();
-                    var settings = new JsonSerializerSettings
-                    {
-                        ContractResolver = new PrivateSetterContractResolver()
-                    };
-                    var results = JsonConvert.DeserializeObject<IEnumerable<KeyItemValue>>(data, settings);
-                    watch.Stop();
-                    _logger.LogInformation("{0} method executed in {1} seconds", MethodBase.GetCurrentMethod().Name, watch.Elapsed.TotalSeconds);
-                    return results;
-                }
-                else
-                {
-                    await Task.Delay(100);
-                    throw new HttpRequestException(response.ReasonPhrase);
-                }
+                    ContractResolver = new PrivateSetterContractResolver()
+                };
+                var results = JsonConvert.DeserializeObject<IEnumerable<KeyItemValue>>(data, settings);
+                watch.Stop();
+                _logger.LogInformation("{0} method executed in {1} seconds", MethodBase.GetCurrentMethod().Name, watch.Elapsed.TotalSeconds);
+                return results;
             }
+
+            #endregion
+
+
         }
-
-        #endregion
-
-
     }
 }

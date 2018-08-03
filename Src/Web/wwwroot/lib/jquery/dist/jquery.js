@@ -15,11 +15,11 @@
 (function( global, factory ) {
 
 	if ( typeof module === "object" && typeof module.exports === "object" ) {
-		// For CommonJS and CommonJS-like environments where a proper `window`
+		// For CommonJS and CommonJS-like environments where a proper 'window'
 		// is present, execute the factory and get jQuery.
-		// For environments that do not have a `window` with a `document`
+		// For environments that do not have a 'window' with a 'document'
 		// (such as Node.js), expose a factory as module.exports.
-		// This accentuates the need for the creation of a real `window`.
+		// This accentuates the need for the creation of a real 'window'.
 		// e.g. var jQuery = require("jquery")(window);
 		// See ticket #14549 for more info.
 		module.exports = global.document ?
@@ -524,7 +524,7 @@ function( i, name ) {
 function isArrayLike( obj ) {
 
 	// Support: iOS 8.2 (not reproducible in simulator)
-	// `in` check used to prevent JIT error (gh-2145)
+	// 'in' check used to prevent JIT error (gh-2145)
 	// hasOwn isn't used here due to false negatives
 	// regarding Nodelist length in IE
 	var length = !!obj && "length" in obj && obj.length,
@@ -661,7 +661,7 @@ var i,
 			"*(\\d+)|))" + whitespace + "*\\)|)", "i" ),
 		"bool": new RegExp( "^(?:" + booleans + ")$", "i" ),
 		// For use in libraries implementing .is()
-		// We use this for POS matching in `select`
+		// We use this for POS matching in 'select'
 		"needsContext": new RegExp( "^" + whitespace + "*[>+~]|:(even|odd|eq|gt|lt|nth|first|last)(?:\\(" +
 			whitespace + "*((?:-\\d)?\\d*)" + whitespace + "*\\)|)(?=[^-]|$)", "i" )
 	},
@@ -1167,7 +1167,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 
 	// qSa(:focus) reports false when true (Chrome 21)
 	// We allow this because of a bug in IE8/9 that throws an error
-	// whenever `document.activeElement` is accessed on an iframe
+	// whenever 'document.activeElement' is accessed on an iframe
 	// So, we allow :focus to pass through QSA all the time to avoid the IE error
 	// See http://bugs.jquery.com/ticket/13378
 	rbuggyQSA = [];
@@ -1213,7 +1213,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 
 			// Support: Safari 8+, iOS 8+
 			// https://bugs.webkit.org/show_bug.cgi?id=136851
-			// In-page `selector#id sibing-combinator selector` fails
+			// In-page 'selector#id sibing-combinator selector' fails
 			if ( !div.querySelectorAll( "a#" + expando + "+*" ).length ) {
 				rbuggyQSA.push(".#.+[+~]");
 			}
@@ -1713,10 +1713,10 @@ Expr = Sizzle.selectors = {
 
 						start = [ forward ? parent.firstChild : parent.lastChild ];
 
-						// non-xml :nth-child(...) stores cache data on `parent`
+						// non-xml :nth-child(...) stores cache data on 'parent'
 						if ( forward && useCache ) {
 
-							// Seek `elem` from a previously-cached index
+							// Seek 'elem' from a previously-cached index
 
 							// ...in a gzip-friendly way
 							node = parent;
@@ -1734,10 +1734,10 @@ Expr = Sizzle.selectors = {
 
 							while ( (node = ++nodeIndex && node && node[ dir ] ||
 
-								// Fallback to seeking `elem` from the start
+								// Fallback to seeking 'elem' from the start
 								(diff = nodeIndex = 0) || start.pop()) ) {
 
-								// When found, cache indexes on `parent` and break
+								// When found, cache indexes on 'parent' and break
 								if ( node.nodeType === 1 && ++diff && node === elem ) {
 									uniqueCache[ type ] = [ dirruns, nodeIndex, diff ];
 									break;
@@ -1764,7 +1764,7 @@ Expr = Sizzle.selectors = {
 							// xml :nth-child(...)
 							// or :nth-last-child(...) or :nth(-last)?-of-type(...)
 							if ( diff === false ) {
-								// Use the same loop as above to seek `elem` from the start
+								// Use the same loop as above to seek 'elem' from the start
 								while ( (node = ++nodeIndex && node && node[ dir ] ||
 									(diff = nodeIndex = 0) || start.pop()) ) {
 
@@ -1854,7 +1854,7 @@ Expr = Sizzle.selectors = {
 						unmatched = matcher( seed, null, xml, [] ),
 						i = seed.length;
 
-					// Match elements unmatched by `matcher`
+					// Match elements unmatched by 'matcher'
 					while ( i-- ) {
 						if ( (elem = unmatched[i]) ) {
 							seed[i] = !(matches[i] = elem);
@@ -2369,7 +2369,7 @@ function matcherFromTokens( tokens ) {
 				return setMatcher(
 					i > 1 && elementMatcher( matchers ),
 					i > 1 && toSelector(
-						// If the preceding token was a descendant combinator, insert an implicit any-element `*`
+						// If the preceding token was a descendant combinator, insert an implicit any-element '*'
 						tokens.slice( 0, i - 1 ).concat({ value: tokens[ i - 2 ].type === " " ? "*" : "" })
 					).replace( rtrim, "$1" ),
 					matcher,
@@ -2440,16 +2440,16 @@ function matcherFromGroupMatchers( elementMatchers, setMatchers ) {
 				}
 			}
 
-			// `i` is now the count of elements visited above, and adding it to `matchedCount`
+			// 'i' is now the count of elements visited above, and adding it to 'matchedCount'
 			// makes the latter nonnegative.
 			matchedCount += i;
 
 			// Apply set filters to unmatched elements
-			// NOTE: This can be skipped if there are no unmatched elements (i.e., `matchedCount`
-			// equals `i`), unless we didn't visit _any_ elements in the above loop because we have
+			// NOTE: This can be skipped if there are no unmatched elements (i.e., 'matchedCount'
+			// equals 'i'), unless we didn't visit _any_ elements in the above loop because we have
 			// no element matchers and no seed.
-			// Incrementing an initially-string "0" `i` allows `i` to remain a string only in that
-			// case, which will result in a "00" `matchedCount` that differs from `i` but is also
+			// Incrementing an initially-string "0" 'i' allows 'i' to remain a string only in that
+			// case, which will result in a "00" 'matchedCount' that differs from 'i' but is also
 			// numerically zero.
 			if ( bySet && i !== matchedCount ) {
 				j = 0;
@@ -2595,7 +2595,7 @@ select = Sizzle.select = function( selector, context, results, seed ) {
 	}
 
 	// Compile and execute a filtering function if one is not provided
-	// Provide `match` to avoid retokenization if we modified the selector above
+	// Provide 'match' to avoid retokenization if we modified the selector above
 	( compiled || compile( selector, match ) )(
 		seed,
 		context,
@@ -3960,8 +3960,8 @@ jQuery.fn.extend( {
 
 			// The calling jQuery object (element matches) is not empty
 			// (and therefore has an element appears at this[ 0 ]) and the
-			// `value` parameter was not undefined. An empty jQuery object
-			// will result in `undefined` for elem = this[ 0 ] which will
+			// 'value' parameter was not undefined. An empty jQuery object
+			// will result in 'undefined' for elem = this[ 0 ] which will
 			// throw an exception if an attempt to read a data cache is made.
 			if ( elem && value === undefined ) {
 
@@ -4399,7 +4399,7 @@ function buildFragment( elems, context, scripts, selection, ignored ) {
 	// Support: Android 4.0-4.3, Safari<=5.1
 	// Check state lost if the name is set (#11217)
 	// Support: Windows Web Apps (WWA)
-	// `name` and `type` must use .setAttribute for WWA (#14901)
+	// 'name' and 'type' must use .setAttribute for WWA (#14901)
 	input.setAttribute( "type", "radio" );
 	input.setAttribute( "checked", "checked" );
 	input.setAttribute( "name", "t" );
@@ -6699,7 +6699,7 @@ function Animation( elem, properties, options ) {
 				remaining = Math.max( 0, animation.startTime + animation.duration - currentTime ),
 
 				// Support: Android 2.3
-				// Archaic crash bug won't allow us to use `1 - ( 0.5 || 0 )` (#12497)
+				// Archaic crash bug won't allow us to use '1 - ( 0.5 || 0 )' (#12497)
 				temp = remaining / animation.duration || 0,
 				percent = 1 - temp,
 				index = 0,
@@ -7488,7 +7488,7 @@ jQuery.fn.extend( {
 					dataPriv.set( this, "__className__", className );
 				}
 
-				// If the element has a class name or if we're passed `false`,
+				// If the element has a class name or if we're passed 'false',
 				// then remove the whole classname (if there was one, the above saved it).
 				// Otherwise bring back whatever was previously saved (if anything),
 				// falling back to the empty string if nothing was stored.
@@ -7841,7 +7841,7 @@ jQuery.extend( jQuery.event, {
 				type: type,
 				isSimulated: true
 
-				// Previously, `originalEvent: {}` was set here, so stopPropagation call
+				// Previously, 'originalEvent: {}' was set here, so stopPropagation call
 				// would not be triggered on donor event, since in our own
 				// jQuery.event.stopPropagation function we had a check for existence of
 				// originalEvent.stopPropagation method, so, consequently it would be a noop.
@@ -7851,7 +7851,7 @@ jQuery.extend( jQuery.event, {
 				//
 				// For the compat branch though, guard for "click" and "submit"
 				// events is still used, but was moved to jQuery.event.stopPropagation function
-				// because `originalEvent` should point to the original event for the constancy
+				// because 'originalEvent' should point to the original event for the constancy
 				// with other events and for more focused logic
 			}
 		);
