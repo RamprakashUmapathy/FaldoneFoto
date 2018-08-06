@@ -33,16 +33,22 @@ namespace Web.Extensions
             return (category != null ? category.Families : new List<Family>());
         }
 
-        public static IEnumerable<Series> GetSeries(this IEnumerable<Category> coll)
+        public static IEnumerable<Series> GetSeries(this IEnumerable<Category> coll, string categoryId, string familyId)
         {
             if (coll == null) throw new ArgumentNullException(nameof(coll));
-            return coll.SelectMany(c => c.Families).SelectMany(f => f.Series);
+            return coll.GetFamilies(categoryId).GetSeries(familyId);
         }
 
         public static IEnumerable<Series> GetSeries(this IEnumerable<Family> coll)
         {
             if (coll == null) throw new ArgumentNullException(nameof(coll));
             return coll.SelectMany(f => f.Series);
+        }
+
+        public static IEnumerable<Series> GetSeries(this IEnumerable<Family> coll,string familyId)
+        {
+            if (coll == null) throw new ArgumentNullException(nameof(coll));
+            return coll.Where(f => f.Id == familyId).GetSeries();
         }
 
         public static IEnumerable<Level1> GetLevel1s(this IEnumerable<Category> coll)
@@ -66,6 +72,13 @@ namespace Web.Extensions
             return coll.SelectMany(s => s.Level1s);
         }
 
+        public static IEnumerable<Level1> GetLevel1s(this IEnumerable<Category> coll, string categoryId, string familyId, string seriesId)
+        {
+            if (coll == null) throw new ArgumentNullException(nameof(coll));
+            return coll.GetFamilies(categoryId).GetSeries(familyId)
+                            .GetLevel1s();
+        }
+
         public static IEnumerable<Level2> GetLevel2s(this IEnumerable<Category> coll)
         {
             if (coll == null) throw new ArgumentNullException(nameof(coll));
@@ -75,6 +88,11 @@ namespace Web.Extensions
                        .SelectMany(l1 => l1.Level2s);
         }
 
+        public static IEnumerable<Level2> GetLevel2s(this IEnumerable<Category> coll, string categoryId, string familyId, string seriesId, string level1Id )
+        {
+            if (coll == null) throw new ArgumentNullException(nameof(coll));
+            return coll.GetLevel1s(categoryId, familyId, seriesId).GetLevel2s(level1Id);
+        }
         public static IEnumerable<Level2> GetLevel2s(this IEnumerable<Family> coll)
         {
             if (coll == null) throw new ArgumentNullException(nameof(coll));

@@ -53,10 +53,6 @@ namespace Kasanova.FaldoneFoto.ApplicationCore.Entities
 
         public bool HasPhoto { get; private set; }
 
-        public bool HasPhotoInChalco { get; private set; }
-
-        public string SupplyStatusId { get; private set; }
-
         public string ItemBarCode { get; private set; }
 
         public bool IsPrivateLabel { get; private set; }
@@ -67,7 +63,7 @@ namespace Kasanova.FaldoneFoto.ApplicationCore.Entities
 
         public bool InMagento { get; private set; }
 
-        public bool InAmazon { get; private set; }
+        public bool InAmazon { get ; private set; }
 
         public bool InEBay { get; private set; }
 
@@ -79,61 +75,22 @@ namespace Kasanova.FaldoneFoto.ApplicationCore.Entities
 
         public string PrimaryVendorAccount { get; private set; }
 
-        public IEnumerable<string> StockGroups { get; private set; }
+        public List<Kasanova.ApplicationCore.Entities.StockGroup> StockGroups { get; private set; }
 
-        public IEnumerable<ArticlePriceList> PriceLists { get; private set; }
+        public IEnumerable<PriceList> PriceLists { get; private set; }
 
+        public string PriceListNames{ get { return string.Join(',', PriceLists.Select(f => f.PriceListId)); } }
 
-    }
+        public IEnumerable<SupplyStatus> SupplyStatuses { get; private set; }
 
-    public class ArticlePriceList
-    {
-        public string  PriceListId { get; private set; }
+        public string TagName { get; private set; }
 
-        public decimal Price { get; private set; }
+        public Article()
+        {
+            PriceLists = new List<PriceList>();
+            StockGroups = new List<Kasanova.ApplicationCore.Entities.StockGroup>();
+        }
 
-        public decimal NetPrice { get; private set; }
-
-        public double DiscountPercent { get; private set; }
-    }
-
-    public class ChalcoArticle : Article
-    {
-        public string  Color { get; private set; }
-
-        public string WebColor { get; private set; }
-
-        public string YoutubeVideo { get; private set; }
-
-        public double Width { get; private set; }
-
-        public double Height { get; private set; }
-
-        public double Depth { get; private set; }
-
-        public double Weight { get; private set; }
-
-        public double PackWidth { get; private set; }
-
-        public double PackHeight { get; private set; }
-
-        public double PackDepth { get; private set; }
-
-        public double PackWeight { get; private set; }
-
-        public bool Fragile { get; private set; }
-
-        public bool Packaging { get; private set; }
-
-        public bool Delivery { get; private set; }
-
-        public string SubTitle { get; private set; }
-
-        public new string Description { get; private set; }
-
-        public string ChalcoDescriptionShort { get; private set; }
-
-        public string Materials { get; private set; }
 
     }
 

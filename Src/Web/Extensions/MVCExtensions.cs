@@ -1,4 +1,5 @@
 ﻿using Kasanova.FaldoneFoto.ApplicationCore.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
@@ -100,6 +101,10 @@ namespace Web.Extensions
             return results;
         }
 
-
+        public static T RegisterForDispose<T>(this T disposable, HttpContext context) where T : IDisposable
+        {
+            context.Response.RegisterForDispose(disposable);
+            return disposable;
+        }
     }
 }

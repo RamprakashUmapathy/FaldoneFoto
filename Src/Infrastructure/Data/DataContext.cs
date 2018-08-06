@@ -1,4 +1,4 @@
-﻿using Kasanova.FaldoneFoto.Infrastructure.Enums;
+﻿
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Data;

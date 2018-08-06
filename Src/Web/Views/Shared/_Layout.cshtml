@@ -27,73 +27,7 @@
     @RenderSection("customstyles", false)
 </head>
 <body>
-    <!-- Search Wrapper Area Start -->
-    <div class="search-wrapper section-padding-100">
-        <div class="search-close">
-            <i class="fa fa-close" aria-hidden="true"></i>
-        </div>
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <div class="search-content">
-                        <input type="search" name="search" id="search" placeholder="Type your keyword...">
-                        <button type="submit"><img src="~/images/search.png" alt=""></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Search Wrapper Area End -->
-    <!-- ##### Main Content Wrapper Start ##### -->
-    <div class="main-content-wrapper d-flex clearfix">
-        <!-- Mobile Nav (max width 767px)-->
-        <div class="mobile-nav">
-            <!-- Navbar Brand -->
-            <div class="amado-navbar-brand">
-                <a href="@Url.Action("Index", "Home")"><img src="~/images/logo_kasanova_top.png" alt=""></a>
-            </div>
-            <!-- Navbar Toggler -->
-            <div class="amado-navbar-toggler">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-        <!-- Header Area Start -->
-        <header class="header-area clearfix">
-            <!-- Close Icon -->
-            <div class="nav-close">
-                <i class="fa fa-close" aria-hidden="true"></i>
-            </div>
-            <!-- Logo -->
-            <div class="logo">
-                <a href="@Url.Action("Index", "Home")"><img src="~/images/logo_kasanova_top.png" alt=""></a>
-            </div>
-            <!-- Amado Nav -->
-            <nav class="amado-nav">
-                <ul>
-                    <li>
-                        <a class="nav-link" href="@Url.Action("Index", "Home")">Home</a>
-                    </li>
-                    <li>
-                        <a class="nav-link" href="#">Favourites</a>
-                    </li>
-                    <li>
-                        <a class="nav-link" href="#">Checkout</a>
-                    </li>
-                </ul>
-            </nav>
-            <!-- Cart Menu -->
-            <div class="cart-fav-search mb-100">
-                @*<a href="#" class="cart-nav"><img src="~/images/cart.png" alt=""> Cart <span>(0)</span></a>*@
-                <a href="#" class="fav-nav"><img src="~/images/favorites.png" alt=""> Favourite</a>
-                <a href="#" class="search-nav"><img src="~/images/search.png" alt=""> Search</a>
-            </div>
-            <div class="cart-fav-search mb-100">
-                @RenderSection("sidebar", false)
-            </div>
-        </header>
-        @RenderBody()
-    </div>
-    <!-- ##### Main Content Wrapper End ##### -->
+    @RenderBody()
     <!-- ##### Footer Area Start ##### -->
     <footer class="footer_area clearfix">
         <div class="container">

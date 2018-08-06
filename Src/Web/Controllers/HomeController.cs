@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
+using Web.Extensions;
 using Web.ViewModels;
 
 namespace Web.Controllers
@@ -22,12 +23,20 @@ namespace Web.Controllers
         private IAppLogger<HomeController> _logger;
         private IConfiguration _configuration;
         private IMemoryCache _cache;
+        private HttpClient Client { get; }
 
         public HomeController(IAppLogger<HomeController> logger, IConfiguration configuration, IMemoryCache memoryCache)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _cache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
+
+            Client = new HttpClient();
+            string apiUrl = _configuration.GetValue<string>("WebApiBaseUrl");
+            var uri = new UriBuilder(apiUrl);
+            Client.BaseAddress = uri.Uri;
+            Client.DefaultRequestHeaders.Accept.Clear();
+            Client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
         }
 
 
@@ -35,91 +44,38 @@ namespace Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            using (HttpClient client = new HttpClient())
+            Client.RegisterForDispose(this.ControllerContext.HttpContext);
+            ViewBag.IsCardView = true;
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+            HomeViewModel model = new HomeViewModel
             {
-                string apiUrl = _configuration.GetValue<string>("WebApiBaseUrl");
-                ViewBag.IsCardView = true;
+                Client = Client
+            };
+            Client.DefaultRequestHeaders.Add("SHOPSIGN", model.ShopSignId);
 
-                Stopwatch watch = new Stopwatch();
-                watch.Start();
+            await model.Load(false);
+            watch.Stop();
 
-                var uri = new UriBuilder(apiUrl);
-                client.BaseAddress = uri.Uri;
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-
-                HomeViewModel model = new HomeViewModel
-                {
-                    Client = client
-                };
-                await model.Load();
-
-                watch.Stop();
-                _logger.LogInformation("{0} method executed in {1} seconds", "Home.Index", watch.Elapsed.TotalSeconds);
-                return View(model);
-            }
-
+            _logger.LogInformation("{0} method executed in {1} seconds", "Home.Index(GET)", watch.Elapsed.TotalSeconds);
+            return View(model);
         }
 
         // POST: Home
         [HttpPost]
-        public async Task<IActionResult> Post(HomeViewModel model)
-        {
-            await Task.Delay(1);
-            throw new NotImplementedException();
-        }
-
-        #region Private methods
-
-        private async Task<IEnumerable<Category>> GetCategories()
-        {
-            string apiUrl = _configuration.GetValue<string>("WebApiBaseUrl");
-            using (HttpClient client = new HttpClient())
-            {
-                var uri = new UriBuilder(apiUrl);
-                client.BaseAddress = uri.Uri;
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-                HttpResponseMessage response = await client.GetAsync("Categories");
-                response.EnsureSuccessStatusCode();
-                var data = await response.Content.ReadAsStringAsync();
-                var settings = new JsonSerializerSettings
-                {
-                    ContractResolver = new PrivateSetterContractResolver()
-                };
-                var results = JsonConvert.DeserializeObject<IEnumerable<Category>>(data, settings);
-                return results;
-            }
-        }
-
-        private async Task<IEnumerable<KeyItemValue>> GetItemValues(string keyId)
+        public async Task<IActionResult> Index(HomeViewModel model)
         {
             Stopwatch watch = new Stopwatch();
             watch.Start();
 
-            var apiUrl = _configuration.GetValue<string>("WebApiBaseUrl");
-            var uri = new UriBuilder(apiUrl);
-            using (HttpClient client = new HttpClient())
-            {
-                client.BaseAddress = uri.Uri;
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-                HttpResponseMessage response = await client.GetAsync("KeyItems/" + keyId);
-                response.EnsureSuccessStatusCode();
-                var data = await response.Content.ReadAsStringAsync();
-                var settings = new JsonSerializerSettings
-                {
-                    ContractResolver = new PrivateSetterContractResolver()
-                };
-                var results = JsonConvert.DeserializeObject<IEnumerable<KeyItemValue>>(data, settings);
-                watch.Stop();
-                _logger.LogInformation("{0} method executed in {1} seconds", MethodBase.GetCurrentMethod().Name, watch.Elapsed.TotalSeconds);
-                return results;
-            }
-
-            #endregion
-
-
+            Client.RegisterForDispose(this.ControllerContext.HttpContext);
+            model.Client = Client;
+            Client.DefaultRequestHeaders.Add("SHOPSIGN", model.ShopSignId);
+            await model.Load(true);
+            watch.Stop();
+            _logger.LogInformation("{0} method executed in {1} seconds", "Home.Index(POST)", watch.Elapsed.TotalSeconds);
+            return View(model);
         }
+
     }
 }

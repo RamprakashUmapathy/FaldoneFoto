@@ -371,24 +371,24 @@ namespace Kasanova.FaldoneFoto.ApplicationCore.Entities
         }
     }
 
-    public class PriceList : BaseEntity<string>, IEquatable<PriceList>
-    {
-        public PriceList()
-        {
+    //public class PriceList : BaseEntity<string>, IEquatable<PriceList>
+    //{
+    //    public PriceList()
+    //    {
 
-        }
+    //    }
 
-        public bool Equals(PriceList other)
-        {
-            if (other == null) return false;
-            return this.Id == other.Id;
-        }
+    //    public bool Equals(PriceList other)
+    //    {
+    //        if (other == null) return false;
+    //        return this.Id == other.Id;
+    //    }
 
-        public override int GetHashCode()
-        {
-            return this.Id.GetHashCode();
-        }
-    }
+    //    public override int GetHashCode()
+    //    {
+    //        return this.Id.GetHashCode();
+    //    }
+    //}
 
     public class StockGroup : BaseEntity<string>, IEquatable<StockGroup>
     {

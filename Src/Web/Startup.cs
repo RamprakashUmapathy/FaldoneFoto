@@ -3,12 +3,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
 using Kasanova.FaldoneFoto.Infrastructure.Data;
-using Kasanova.FaldoneFoto.Infrastructure.Enums;
 using Kasanova.Common.ApplicationCore.Interfaces;
 using Infrastructure.Logging;
-using Web.Services;
 
 namespace DevExpressStarterProject
 {
@@ -37,7 +34,6 @@ namespace DevExpressStarterProject
             // IoC for repositories
             services.AddScoped<IUnitOfWork, DataContext>();
             services.AddScoped<IKeyItemValueRepository, KeyItemValueRepository>();
-            services.AddScoped<ICategoryRepository, CategoryRepositoryCache>();
             services.AddScoped<IArticleRepository, ArticleRepositoryCache>();
 
             services.AddMvc();
@@ -68,7 +64,7 @@ namespace DevExpressStarterProject
                                 template: "api/categories",
                                 defaults: new
                                 {
-                                    controller = "Categories",
+                                    controller = "Articles",
                                     action = "GetCategoriesAsync"
                                 });
 
@@ -76,7 +72,7 @@ namespace DevExpressStarterProject
                                 template: "api/categories/{categoryId}",
                                 defaults: new
                                 {
-                                    controller = "Categories",
+                                    controller = "Articles",
                                     action = "GetCategoriesByIdAsync"
                                 });
 
@@ -84,7 +80,7 @@ namespace DevExpressStarterProject
                     template: "api/categories/{categoryid}/families",
                     defaults: new
                     {
-                        controller = "Categories",
+                        controller = "Articles",
                         action = "GetFamiliesAsync"
                     });
 
@@ -92,7 +88,7 @@ namespace DevExpressStarterProject
                     template: "api/categories/{categoryid}/families/{familyid}",
                     defaults: new
                     {
-                        controller = "Categories",
+                        controller = "Articles",
                         action = "GetFamiliesByIdAsync"
                     });
 
@@ -100,7 +96,7 @@ namespace DevExpressStarterProject
                     template: "api/categories/{categoryid}/families/{familyid}/series",
                     defaults: new
                     {
-                        controller = "Categories",
+                        controller = "Articles",
                         action = "GetSeriesAsync"
                     });
 
@@ -108,7 +104,7 @@ namespace DevExpressStarterProject
                     template: "api/categories/{categoryid}/families/{familyid}/series/{seriesid}",
                     defaults: new
                     {
-                        controller = "Categories",
+                        controller = "Articles",
                         action = "GetSeriesByIdAsync"
                     });
 
@@ -116,7 +112,7 @@ namespace DevExpressStarterProject
                     template: "api/categories/{categoryid}/families/{familyid}/series/{seriesid}/level1",
                     defaults: new
                     {
-                        controller = "Categories",
+                        controller = "Articles",
                         action = "GetLevel1Async"
                     });
 
@@ -124,7 +120,7 @@ namespace DevExpressStarterProject
                     template: "api/categories/{categoryid}/families/{familyid}/series/{seriesid}/level1/{level1id}",
                     defaults: new
                     {
-                        controller = "Categories",
+                        controller = "Articles",
                         action = "GetLevel1ByIdAsync"
                     });
 
@@ -132,7 +128,7 @@ namespace DevExpressStarterProject
                     template: "api/categories/{categoryid}/families/{familyid}/series/{seriesid}/level1/{level1id}/level2",
                     defaults: new
                     {
-                        controller = "Categories",
+                        controller = "Articles",
                         action = "GetLevel2Async"
                     });
 
@@ -140,7 +136,7 @@ namespace DevExpressStarterProject
                     template: "api/categories/{categoryid}/families/{familyid}/series/{seriesid}/level1/{level1id}/level2/{level2id}",
                     defaults: new
                     {
-                        controller = "Categories",
+                        controller = "Articles",
                         action = "GetLevel2ByIdAsync"
                     });
 
@@ -148,18 +144,25 @@ namespace DevExpressStarterProject
                     template: "api/categories/{categoryid}/families/{familyid}/series/{seriesid}/level1/{level1id}/level2/{level2id}/styles",
                     defaults: new
                     {
-                        controller = "Categories",
+                        controller = "Articles",
                         action = "GetStylesAsync"
                     });
 
-                routes.MapRoute(name: "StylleByIdApi",
+                routes.MapRoute(name: "StyleByIdApi",
                     template: "api/categories/{categoryid}/families/{familyid}/series/{seriesid}/level1/{level1id}/level2/{level2id}/styles/{styleid}",
                     defaults: new
                     {
-                        controller = "Categories",
+                        controller = "Articles",
                         action = "GetStylesByIdAsync"
                     });
 
+                routes.MapRoute(name: "ArticleApi",
+                    template: "api/articles/{categoryid?}/{familyid?}/{seriesid?}/{level1id?}/{level2id?}",
+                    defaults: new
+                    {
+                        controller = "Articles",
+                        action = "GetArticlesAsync"
+                    });
 
             });
         }

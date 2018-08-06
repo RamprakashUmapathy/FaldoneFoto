@@ -26,6 +26,15 @@ namespace Web.ViewModels
 
         public string SearchOption { get; set; }
 
+        private string _shopSignId;
+        public string ShopSignId
+        {
+            get { return _shopSignId ?? "KASANOVA";  } //Use KASANOVA as default
+            set { _shopSignId = value; }
+        }
+
+        public IEnumerable<SelectListItem> ShopSigns { get; private set; }
+
         public string CategoryId { get; set; }
 
         public IEnumerable<SelectListItem> Categories { get; private set; }
@@ -122,8 +131,14 @@ namespace Web.ViewModels
             IsCardView = true;
         }
 
-        public async Task<HomeViewModel> Load()
+        public async Task<HomeViewModel> Load(bool post)
         {
+            string emptyItemText = await GetItem("EmptyItemSelect");
+            var emptyItem = new SelectListItem() { Text = emptyItemText, Value = "" };
+            EmptyItemText = emptyItemText;
+
+            ShopSigns = await GetItems("ShopSigns", ShopSignId, emptyItem);
+
             using (HttpResponseMessage response = await Client.GetAsync("Categories"))
             {
                 response.EnsureSuccessStatusCode();
@@ -132,84 +147,70 @@ namespace Web.ViewModels
                 {
                     ContractResolver = new PrivateSetterContractResolver()
                 };
-                this.Data = JsonConvert.DeserializeObject<IEnumerable<Category>>(data, settings);
-
-                string emptyItemText = await GetItem("EmptyItemSelect");
-                var emptyItem = new SelectListItem() { Text = emptyItemText, Value = "" };
-                var emptyList = new List<SelectListItem>() { emptyItem };
-
-                this.EmptyItemText = emptyItemText;
-                this.Categories = emptyList;
-                this.Families = emptyList;
-                this.Series = emptyList;
-                this.Level1s = emptyList;
-                this.Level2s = emptyList;
-                this.PrivateLabelItems = emptyList;
-                this.Categories = Data.ToSelectListItems(CategoryId, emptyItem);
-
-                this.PrivateLabelItems = await GetItems("PrivateLabel", PrivateLabelId, new SelectListItem() { Text = EmptyItemText, Value = "" });
-                this.WebEnabledItems = await GetItems("WebEnabled", WebEnabledId, new SelectListItem() { Text = EmptyItemText, Value = "" });
-                this.VideoAvailableItems = await GetItems("VideoAvailable", VideoAvailableId, new SelectListItem() { Text = EmptyItemText, Value = "" });
-                this.MandatoryDeliveryItems = await GetItems("MandatoryDelivery", MandatoryDeliveryId, new SelectListItem() { Text = EmptyItemText, Value = "" });
-                this.WareHouseItems = await GetItems("WareHouseName", WareHouseNameId, new SelectListItem() { Text = EmptyItemText, Value = "" });
-                this.DirectDeliveryItems = await GetItems("DirectDelivery", DirectDeliveryId, new SelectListItem() { Text = EmptyItemText, Value = "" });
-                this.ChalcoItems = await GetItems("InChalco", ChalcoId, new SelectListItem() { Text = EmptyItemText, Value = "" });
-                this.PhotoItems = await GetItems("HasPhoto", PhotoId, new SelectListItem() { Text = EmptyItemText, Value = "" });
-                this.ColorItems = await GetItems("Color", ColorId, new SelectListItem() { Text = EmptyItemText, Value = "" });
-                this.StyleItems = Data.GetStyles().ToSelectListItems(StyleId); //.ToSelectListItems(StyleId, emptyItem);
-                this.PriceListItems = Data.GetPriceLists();
-                this.SupplyStatusItems = Data.GetSupplyStatuses();
-                this.StockGroupItems = Data.GetStockGroups();
-
-                return this;
+                Data = JsonConvert.DeserializeObject<IEnumerable<Category>>(data, settings);
             }
+
+            Categories = Data.ToSelectListItems(CategoryId, emptyItem);
+            Families = Data.GetFamilies(CategoryId).ToSelectListItems(FamilyId, emptyItem);
+            Series = Data.GetSeries(CategoryId, FamilyId).ToSelectListItems(SeriesId, emptyItem);
+            Level1s = Data.GetLevel1s(CategoryId, FamilyId, SeriesId).ToSelectListItems(Level1Id, emptyItem);
+            Level2s = Data.GetLevel2s(CategoryId, FamilyId, SeriesId, Level1Id).ToSelectListItems(Level2Id, emptyItem); ;
+
+            PrivateLabelItems = await GetItems("PrivateLabel", PrivateLabelId, emptyItem);
+            WebEnabledItems = await GetItems("WebEnabled", WebEnabledId, emptyItem);
+            VideoAvailableItems = await GetItems("VideoAvailable", VideoAvailableId, emptyItem);
+            MandatoryDeliveryItems = await GetItems("MandatoryDelivery", MandatoryDeliveryId, emptyItem);
+            WareHouseItems = await GetItems("WareHouseName", WareHouseNameId, emptyItem);
+            DirectDeliveryItems = await GetItems("DirectDelivery", DirectDeliveryId, emptyItem);
+            ChalcoItems = await GetItems("InChalco", ChalcoId, emptyItem);
+            PhotoItems = await GetItems("HasPhoto", PhotoId, emptyItem);
+            ColorItems = await GetItems("Color", ColorId, emptyItem);
+            StyleItems = Data.GetStyles().ToSelectListItems(StyleId); //.ToSelectListItems(StyleId, emptyItem);
+            PriceListItems = Data.GetPriceLists();
+            SupplyStatusItems = Data.GetSupplyStatuses();
+            StockGroupItems = Data.GetStockGroups();
+
+            return this;
         }
 
         private async Task<string> GetItem(string keyId)
         {
             using (var response = await Client.GetAsync("KeyItems/" + keyId))
             {
-                if (response.IsSuccessStatusCode)
+                response.EnsureSuccessStatusCode();
+                var data = await response.Content.ReadAsStringAsync();
+                var settings = new JsonSerializerSettings
                 {
-                    var data = await response.Content.ReadAsStringAsync();
-                    var settings = new JsonSerializerSettings
-                    {
-                        ContractResolver = new PrivateSetterContractResolver()
-                    };
-                    var itemValues = JsonConvert.DeserializeObject<IEnumerable<KeyItemValue>>(data, settings);
-                    if (itemValues.Any())
-                    {
-                        return itemValues.First().Description;
-                    }
-                    return null;
-                }
-                else
+                    ContractResolver = new PrivateSetterContractResolver()
+                };
+                var itemValues = JsonConvert.DeserializeObject<IEnumerable<KeyItemValue>>(data, settings);
+                if (itemValues.Any())
                 {
-                    await Task.Delay(1);
-                    throw new HttpRequestException(response.ReasonPhrase);
+                    return itemValues.First().Description;
                 }
+                return null;
             }
         }
 
+        /// <summary>
+        /// Get items from database using a specific key
+        /// </summary>
+        /// <param name="keyId"></param>
+        /// <param name="selectedItems"></param>
+        /// <param name="emptyItem"></param>
+        /// <returns></returns>
         private async Task<IEnumerable<SelectListItem>> GetItems(string keyId, string selectedItems, SelectListItem emptyItem)
         {
             using (var response = await Client.GetAsync("KeyItems/" + keyId))
             {
-                if (response.IsSuccessStatusCode)
+                response.EnsureSuccessStatusCode();
+                var data = await response.Content.ReadAsStringAsync();
+                var settings = new JsonSerializerSettings
                 {
-                    var data = await response.Content.ReadAsStringAsync();
-                    var settings = new JsonSerializerSettings
-                    {
-                        ContractResolver = new PrivateSetterContractResolver()
-                    };
-                    var itemValues = JsonConvert.DeserializeObject<IEnumerable<KeyItemValue>>(data, settings);
-                    return itemValues.ToSelectedListItems(selectedItems, emptyItem);
-                }
-                else
-                {
-                    await Task.Delay(1);
-                    throw new HttpRequestException(response.ReasonPhrase);
-                }
+                    ContractResolver = new PrivateSetterContractResolver()
+                };
+                var itemValues = JsonConvert.DeserializeObject<IEnumerable<KeyItemValue>>(data, settings);
+                return itemValues.ToSelectedListItems(selectedItems, emptyItem);
             }
         }
 

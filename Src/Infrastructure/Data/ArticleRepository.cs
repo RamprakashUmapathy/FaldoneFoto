@@ -54,11 +54,22 @@ namespace Kasanova.FaldoneFoto.Infrastructure.Data
                 conn.Open();
                 string spName = "faldone.ArticlesListAll";
                 var gridReader = await conn.QueryMultipleAsync(spName
-                                                                , new {PageSize = pageSize, PageNumber = pageNumber}
+                                                                , new { PageSize = pageSize, PageNumber = pageNumber }
                                                                , commandType: CommandType.StoredProcedure);
-                var results = await gridReader.ReadAsync<ChalcoArticle>();
+                var results =  await gridReader.ReadAsync<ChalcoArticle>();
+                var articleDict = results.ToDictionary(f => f.Id, f => f);
+
+                var stockGroups = await gridReader.ReadAsync<Kasanova.ApplicationCore.Entities.StockGroup>();
+                foreach (Kasanova.ApplicationCore.Entities.StockGroup stockGroup in stockGroups)
+                {
+                    ChalcoArticle article = null;
+                    if (articleDict.TryGetValue(stockGroup.ArticleId, out article))
+                    {
+                        article.StockGroups.Add(stockGroup);
+                    }
+                }
                 var recordCount = gridReader.Read<int>().First();
-                return PaginationInfo<ChalcoArticle>(pageSize, pageNumber, recordCount, results);
+                return PaginationInfo<ChalcoArticle>(pageSize, pageNumber, articleDict.Count(), articleDict.Values);
             }
         }
 

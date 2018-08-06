@@ -47,7 +47,7 @@ namespace Kasanova.FaldoneFoto.Infrastructure.Data
                 var results = await conn.QueryMultipleAsync(spName
                                                                 , new { PageSize = pageSize, PageNumber = pageNumber }
                                                                , commandType: CommandType.StoredProcedure);
-                var res = await results.ReadAsync<CategoriesCollection.ResultSet>(); 
+                var res = await results.ReadAsync<CategoriesCollection.ResultSet>();
                 var recordCount = results.Read<int>().First();
                 IEnumerable<Category> coll = CategoriesCollection.BuildTree(res);
                 return PaginationInfo<Category>(pageSize, pageNumber, recordCount, coll);
