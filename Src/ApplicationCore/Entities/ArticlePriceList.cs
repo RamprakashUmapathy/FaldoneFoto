@@ -22,6 +22,8 @@ namespace Kasanova.FaldoneFoto.ApplicationCore.Entities
             return this.Id.GetHashCode();
         }
 
+        public string ArticleId { get; private set; }
+
         public string PriceListId { get; private set; }
 
         public decimal GrossSalesPrice { get; private set; }

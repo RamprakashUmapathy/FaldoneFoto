@@ -68,6 +68,15 @@ namespace Kasanova.FaldoneFoto.Infrastructure.Data
                         article.StockGroups.Add(stockGroup);
                     }
                 }
+                var priceLists = await gridReader.ReadAsync<PriceList>();
+                foreach (PriceList pl in priceLists)
+                {
+                    ChalcoArticle article = null;
+                    if (articleDict.TryGetValue(pl.ArticleId, out article))
+                    {
+                        article.PriceLists.Add(pl);
+                    }
+                }
                 var recordCount = gridReader.Read<int>().First();
                 return PaginationInfo<ChalcoArticle>(pageSize, pageNumber, articleDict.Count(), articleDict.Values);
             }

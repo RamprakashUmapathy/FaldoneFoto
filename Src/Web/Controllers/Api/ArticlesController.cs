@@ -57,7 +57,7 @@ namespace Web.Controllers.Api
                 await _articleRepository.ListAllAsync(pageSize, i);
                 articles.AddRange(pageInfo.Data);
             }
-            var stockGroups = GetStockGroupsFromShopSign();
+            var stockGroups = new string[] { "KAS02", "KAS04", "KAS05" };
             var categories = articles.DistinctBy(f => new
             {
                 f.Category,
