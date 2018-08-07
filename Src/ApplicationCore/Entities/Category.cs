@@ -1,9 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Kasanova.FaldoneFoto.ApplicationCore.Entities
 {
+    public class ShopSign : BaseEntity<string>, IEquatable<ShopSign>
+    {
+        private List<Category> _list;
+
+        public ShopSign()
+        {
+            _list = new List<Category>();
+        }
+
+        public List<Category> Categories
+        {
+            get
+            {
+                return _list;
+            }
+            private set
+            {
+                _list = value;
+            }
+        }
+
+        public Category CreateOrGet(string categoryId)
+        {
+            if (categoryId == null) throw new ArgumentNullException();
+            Category cat = new Category() { Id = categoryId };
+            int idx = _list.IndexOf(cat);
+            if (idx == -1)
+            {
+                _list.Add(cat);
+            }
+            else
+            {
+                cat = _list[idx];
+            }
+            return cat;
+        }
+
+        public bool Equals(ShopSign other)
+        {
+            if (other == null)
+                return false;
+            return this.Id == other.Id;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Id.GetHashCode();
+        }
+    }
+
     public class Category : BaseEntity<string>, IEquatable<Category>
     {
 
@@ -78,7 +129,7 @@ namespace Kasanova.FaldoneFoto.ApplicationCore.Entities
             }
             private set
             {
-                _list = value.ToList(); //.ToList().ForEach(f => CreateOrGet(f.Id));
+                _list = value.ToList(); 
             }
         }
 
@@ -113,6 +164,7 @@ namespace Kasanova.FaldoneFoto.ApplicationCore.Entities
 
     public class Series : BaseEntity<string>, IEquatable<Series>
     {
+
         private List<Level1> _list;
 
         public Series()

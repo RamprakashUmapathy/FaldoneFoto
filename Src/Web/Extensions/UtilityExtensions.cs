@@ -20,23 +20,32 @@ namespace Web.Extensions
             return new List<BaseEntity<string>>();
         }
 
+        public static IEnumerable<Category> GetCategories(this IEnumerable<ShopSign> coll, string shopSignId)
+        {
+            if (coll == null) throw new ArgumentNullException(nameof(coll));
+            var signs = coll.Where(f => f.Id == shopSignId).SingleOrDefault();
+            return coll.SelectMany(c => c.Categories);
+        }
+
         public static IEnumerable<Family> GetFamilies(this IEnumerable<Category> coll)
         {
             if (coll == null) throw new ArgumentNullException(nameof(coll));
             return coll.SelectMany(c => c.Families);
         }
 
-        public static IEnumerable<Family> GetFamilies(this IEnumerable<Category> coll, string categoryId)
+        public static IEnumerable<Family> GetFamilies(this IEnumerable<ShopSign> coll, string shopsignId, string categoryId)
         {
             if (coll == null) throw new ArgumentNullException(nameof(coll));
-            var category = coll.Where(f => f.Id == categoryId).SingleOrDefault();
+            var signs = coll.Where(f => f.Id == shopsignId);
+            Category category = signs.SelectMany(c => c.Categories).Where(f => f.Id == categoryId).SingleOrDefault();
             return (category != null ? category.Families : new List<Family>());
         }
 
-        public static IEnumerable<Series> GetSeries(this IEnumerable<Category> coll, string categoryId, string familyId)
+        public static IEnumerable<Series> GetSeries(this IEnumerable<ShopSign> coll, string shopsignId, string categoryId, string familyId)
         {
             if (coll == null) throw new ArgumentNullException(nameof(coll));
-            return coll.GetFamilies(categoryId).GetSeries(familyId);
+            var family = coll.GetFamilies(shopsignId, categoryId).Where(f => f.Id == familyId).SingleOrDefault(); ;
+            return (family != null ? family.Series : new List<Series>());
         }
 
         public static IEnumerable<Series> GetSeries(this IEnumerable<Family> coll)
@@ -45,38 +54,19 @@ namespace Web.Extensions
             return coll.SelectMany(f => f.Series);
         }
 
-        public static IEnumerable<Series> GetSeries(this IEnumerable<Family> coll,string familyId)
-        {
-            if (coll == null) throw new ArgumentNullException(nameof(coll));
-            return coll.Where(f => f.Id == familyId).GetSeries();
-        }
-
-        public static IEnumerable<Level1> GetLevel1s(this IEnumerable<Category> coll)
-        {
-            if (coll == null) throw new ArgumentNullException(nameof(coll));
-            return coll.SelectMany(c => c.Families)
-                       .SelectMany(f => f.Series)
-                       .SelectMany(s => s.Level1s);
-        }
-
-        public static IEnumerable<Level1> GetLevel1s(this IEnumerable<Family> coll)
-        {
-            if (coll == null) throw new ArgumentNullException(nameof(coll));
-            return coll.SelectMany(f => f.Series)
-                       .SelectMany(s => s.Level1s);
-        }
 
         public static IEnumerable<Level1> GetLevel1s(this IEnumerable<Series> coll)
         {
             if (coll == null) throw new ArgumentNullException(nameof(coll));
-            return coll.SelectMany(s => s.Level1s);
+            return coll.SelectMany(f => f.Level1s);
         }
 
-        public static IEnumerable<Level1> GetLevel1s(this IEnumerable<Category> coll, string categoryId, string familyId, string seriesId)
+        public static IEnumerable<Level1> GetLevel1s(this IEnumerable<ShopSign> coll, string shopsignId, string categoryId, string familyId, string seriesId)
         {
             if (coll == null) throw new ArgumentNullException(nameof(coll));
-            return coll.GetFamilies(categoryId).GetSeries(familyId)
-                            .GetLevel1s();
+            var series = coll.GetSeries(shopsignId, categoryId, familyId);
+            return series.Where(s => s.Id == seriesId)
+                            .SelectMany(s => s.Level1s);
         }
 
         public static IEnumerable<Level2> GetLevel2s(this IEnumerable<Category> coll)
@@ -88,26 +78,28 @@ namespace Web.Extensions
                        .SelectMany(l1 => l1.Level2s);
         }
 
-        public static IEnumerable<Level2> GetLevel2s(this IEnumerable<Category> coll, string categoryId, string familyId, string seriesId, string level1Id )
+        public static IEnumerable<Level2> GetLevel2s(this IEnumerable<ShopSign> coll, string shopsignId, string categoryId, string familyId, string seriesId, string level1Id)
         {
             if (coll == null) throw new ArgumentNullException(nameof(coll));
-            return coll.GetLevel1s(categoryId, familyId, seriesId).GetLevel2s(level1Id);
+            var level1s = coll.GetLevel1s(shopsignId, categoryId, familyId, seriesId);
+            return level1s.Where(f => f.Id == level1Id)
+                            .SelectMany(f => f.Level2s);
         }
-        public static IEnumerable<Level2> GetLevel2s(this IEnumerable<Family> coll)
-        {
-            if (coll == null) throw new ArgumentNullException(nameof(coll));
-            return coll.SelectMany(f => f.Series)
-                       .SelectMany(s => s.Level1s)
-                       .SelectMany(l1 => l1.Level2s);
-        }
+        //public static IEnumerable<Level2> GetLevel2s(this IEnumerable<Family> coll)
+        //{
+        //    if (coll == null) throw new ArgumentNullException(nameof(coll));
+        //    return coll.SelectMany(f => f.Series)
+        //               .SelectMany(s => s.Level1s)
+        //               .SelectMany(l1 => l1.Level2s);
+        //}
 
-        public static IEnumerable<Level2> GetLevel2s(this IEnumerable<Series> coll)
-        {
-            if (coll == null) throw new ArgumentNullException(nameof(coll));
-            return coll.SelectMany(s => s.Level1s)
-                       .SelectMany(l1 => l1.Level2s);
+        //public static IEnumerable<Level2> GetLevel2s(this IEnumerable<Series> coll)
+        //{
+        //    if (coll == null) throw new ArgumentNullException(nameof(coll));
+        //    return coll.SelectMany(s => s.Level1s)
+        //               .SelectMany(l1 => l1.Level2s);
 
-        }
+        //}
 
         public static IEnumerable<Level2> GetLevel2s(this IEnumerable<Level1> coll)
         {
@@ -122,10 +114,11 @@ namespace Web.Extensions
             return (level1 != null ? level1.Level2s : new List<Level2>());
         }
 
-        public static IEnumerable<Style> GetStyles(this IEnumerable<Category> coll)
+        public static IEnumerable<Style> GetStyles(this IEnumerable<ShopSign> coll)
         {
             if (coll == null) throw new ArgumentNullException(nameof(coll));
-            return coll.SelectMany(c => c.Families)
+            return coll.SelectMany(s => s.Categories)
+                        .SelectMany(c => c.Families)
                        .SelectMany(f => f.Series)
                        .SelectMany(s => s.Level1s)
                        .SelectMany(l1 => l1.Level2s)

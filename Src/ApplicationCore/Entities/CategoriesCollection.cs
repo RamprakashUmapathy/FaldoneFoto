@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Web;
 
 namespace Kasanova.FaldoneFoto.ApplicationCore.Entities
 {
@@ -7,7 +8,6 @@ namespace Kasanova.FaldoneFoto.ApplicationCore.Entities
 
     public class CategoriesCollection : IEnumerable<Category>
     {
-
         public class ResultSet
         {
             public string CategoryId { get; set; }
@@ -59,12 +59,10 @@ namespace Kasanova.FaldoneFoto.ApplicationCore.Entities
                 string priceListId = result.PriceListId;
                 string stockGroupId = result.StockGroupId;
                 string supplyStatusId = result.SupplyingStatusId;
-                //string TagId = result.TagId;
-
-                if (!_list.ContainsKey(categoryId))
+                if(!_list.ContainsKey(categoryId))
                 {
                     category = new Category() { Id = categoryId };
-                    _list.Add(category.Id, category);
+                    _list.Add(categoryId, category);
                 }
                 else
                 {
@@ -78,10 +76,9 @@ namespace Kasanova.FaldoneFoto.ApplicationCore.Entities
                 level2.CreateOrGet(new PriceList() { Id = priceListId });
                 level2.CreateOrGet(new StockGroup() { Id = stockGroupId });
                 level2.CreateOrGet(new SupplyStatus() { Id = supplyStatusId });
-
             }
-            return _list.Values;
 
+            return _list.Values;
         }
     }
 }

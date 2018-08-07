@@ -76,6 +76,7 @@ namespace Kasanova.FaldoneFoto.ApplicationCore.Entities
         public string PrimaryVendorAccount { get; private set; }
 
         public List<Kasanova.ApplicationCore.Entities.StockGroup> StockGroups { get; private set; }
+        public string StockGroupNames { get { return string.Join(',', StockGroups.Select(f => f.StockGroupId)); } }
 
         public List<PriceList> PriceLists { get; private set; }
 

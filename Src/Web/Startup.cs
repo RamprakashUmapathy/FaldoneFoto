@@ -60,8 +60,16 @@ namespace DevExpressStarterProject
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
 
+                routes.MapRoute(name: "ShopSignApi",
+                                template: "api/shopsigns",
+                                defaults: new
+                                {
+                                    controller = "Articles",
+                                    action = "GetShopSignsAsync"
+                                });
+
                 routes.MapRoute(name: "CategoryApi",
-                                template: "api/categories",
+                                template: "api/shopsigns/{shopsignid}/categories",
                                 defaults: new
                                 {
                                     controller = "Articles",
@@ -69,7 +77,7 @@ namespace DevExpressStarterProject
                                 });
 
                 routes.MapRoute(name: "CategoryByIdApi",
-                                template: "api/categories/{categoryId}",
+                                template: "api/shopsigns/{shopsignid}/categories/{categoryId}",
                                 defaults: new
                                 {
                                     controller = "Articles",
@@ -77,7 +85,7 @@ namespace DevExpressStarterProject
                                 });
 
                 routes.MapRoute(name: "FamilyApi",
-                    template: "api/categories/{categoryid}/families",
+                    template: "api/shopsigns/{shopsignid}/categories/{categoryid}/families",
                     defaults: new
                     {
                         controller = "Articles",
@@ -85,7 +93,7 @@ namespace DevExpressStarterProject
                     });
 
                 routes.MapRoute(name: "FamilyByIdApi",
-                    template: "api/categories/{categoryid}/families/{familyid}",
+                    template: "api/shopsigns/{shopsignid}/categories/{categoryid}/families/{familyid}",
                     defaults: new
                     {
                         controller = "Articles",
@@ -93,7 +101,7 @@ namespace DevExpressStarterProject
                     });
 
                 routes.MapRoute(name: "SeriesApi",
-                    template: "api/categories/{categoryid}/families/{familyid}/series",
+                    template: "api/shopsigns/{shopsignid}/categories/{categoryid}/families/{familyid}/series",
                     defaults: new
                     {
                         controller = "Articles",
@@ -101,7 +109,7 @@ namespace DevExpressStarterProject
                     });
 
                 routes.MapRoute(name: "SeriesByIdApi",
-                    template: "api/categories/{categoryid}/families/{familyid}/series/{seriesid}",
+                    template: "api/shopsigns/{shopsignid}/categories/{categoryid}/families/{familyid}/series/{seriesid}",
                     defaults: new
                     {
                         controller = "Articles",
@@ -109,7 +117,7 @@ namespace DevExpressStarterProject
                     });
 
                 routes.MapRoute(name: "Level1Api",
-                    template: "api/categories/{categoryid}/families/{familyid}/series/{seriesid}/level1",
+                    template: "api/shopsigns/{shopsignid}/categories/{categoryid}/families/{familyid}/series/{seriesid}/level1",
                     defaults: new
                     {
                         controller = "Articles",
@@ -117,7 +125,7 @@ namespace DevExpressStarterProject
                     });
 
                 routes.MapRoute(name: "Level1ByIdApi",
-                    template: "api/categories/{categoryid}/families/{familyid}/series/{seriesid}/level1/{level1id}",
+                    template: "api/shopsigns/{shopsignid}/categories/{categoryid}/families/{familyid}/series/{seriesid}/level1/{level1id}",
                     defaults: new
                     {
                         controller = "Articles",
@@ -125,7 +133,7 @@ namespace DevExpressStarterProject
                     });
 
                 routes.MapRoute(name: "Level2Api",
-                    template: "api/categories/{categoryid}/families/{familyid}/series/{seriesid}/level1/{level1id}/level2",
+                    template: "api/shopsigns/{shopsignid}/categories/{categoryid}/families/{familyid}/series/{seriesid}/level1/{level1id}/level2",
                     defaults: new
                     {
                         controller = "Articles",
@@ -133,7 +141,7 @@ namespace DevExpressStarterProject
                     });
 
                 routes.MapRoute(name: "Level2ByIdApi",
-                    template: "api/categories/{categoryid}/families/{familyid}/series/{seriesid}/level1/{level1id}/level2/{level2id}",
+                    template: "api/shopsigns/{shopsignid}/categories/{categoryid}/families/{familyid}/series/{seriesid}/level1/{level1id}/level2/{level2id}",
                     defaults: new
                     {
                         controller = "Articles",

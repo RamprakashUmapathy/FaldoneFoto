@@ -18,7 +18,7 @@ namespace Web.ViewModels
 
         public HttpClient Client { get; set; }
 
-        private IEnumerable<Category> Data { get; set; }
+        private IEnumerable<ShopSign> Data { get; set; }
 
         public string Search { get; set; }
 
@@ -29,7 +29,7 @@ namespace Web.ViewModels
         private string _shopSignId;
         public string ShopSignId
         {
-            get { return _shopSignId ?? "KASANOVA";  } //Use KASANOVA as default
+            get { return _shopSignId;  } 
             set { _shopSignId = value; }
         }
 
@@ -127,7 +127,7 @@ namespace Web.ViewModels
 
         public HomeViewModel()
         {
-            Data = new List<Category>();
+            Data = new List<ShopSign>();
             IsCardView = true;
         }
 
@@ -139,7 +139,7 @@ namespace Web.ViewModels
 
             ShopSigns = await GetItems("ShopSigns", ShopSignId, emptyItem);
 
-            using (HttpResponseMessage response = await Client.GetAsync("Categories"))
+            using (HttpResponseMessage response = await Client.GetAsync("shopsigns"))
             {
                 response.EnsureSuccessStatusCode();
                 var data = await response.Content.ReadAsStringAsync();
@@ -147,14 +147,15 @@ namespace Web.ViewModels
                 {
                     ContractResolver = new PrivateSetterContractResolver()
                 };
-                Data = JsonConvert.DeserializeObject<IEnumerable<Category>>(data, settings);
+                Data = JsonConvert.DeserializeObject<IEnumerable<ShopSign>>(data, settings);
             }
 
-            Categories = Data.ToSelectListItems(CategoryId, emptyItem);
-            Families = Data.GetFamilies(CategoryId).ToSelectListItems(FamilyId, emptyItem);
-            Series = Data.GetSeries(CategoryId, FamilyId).ToSelectListItems(SeriesId, emptyItem);
-            Level1s = Data.GetLevel1s(CategoryId, FamilyId, SeriesId).ToSelectListItems(Level1Id, emptyItem);
-            Level2s = Data.GetLevel2s(CategoryId, FamilyId, SeriesId, Level1Id).ToSelectListItems(Level2Id, emptyItem); ;
+            ShopSigns = Data.ToSelectListItems(ShopSignId, emptyItem);
+            Categories = Data.GetCategories(ShopSignId).ToSelectListItems(CategoryId, emptyItem);
+            Families = Data.GetFamilies(ShopSignId, CategoryId).ToSelectListItems(FamilyId, emptyItem);
+            Series = Data.GetSeries(ShopSignId, CategoryId, FamilyId).ToSelectListItems(SeriesId, emptyItem);
+            Level1s = Data.GetLevel1s(ShopSignId, CategoryId, FamilyId, SeriesId).ToSelectListItems(Level1Id, emptyItem);
+            Level2s = Data.GetLevel2s(ShopSignId, CategoryId, FamilyId, SeriesId, Level1Id).ToSelectListItems(Level2Id, emptyItem); 
 
             PrivateLabelItems = await GetItems("PrivateLabel", PrivateLabelId, emptyItem);
             WebEnabledItems = await GetItems("WebEnabled", WebEnabledId, emptyItem);
@@ -166,9 +167,9 @@ namespace Web.ViewModels
             PhotoItems = await GetItems("HasPhoto", PhotoId, emptyItem);
             ColorItems = await GetItems("Color", ColorId, emptyItem);
             StyleItems = Data.GetStyles().ToSelectListItems(StyleId); //.ToSelectListItems(StyleId, emptyItem);
-            PriceListItems = Data.GetPriceLists();
-            SupplyStatusItems = Data.GetSupplyStatuses();
-            StockGroupItems = Data.GetStockGroups();
+            PriceListItems = new List<PriceList>();  //Data.GetPriceLists();
+            SupplyStatusItems = new List<SupplyStatus>(); //Data.GetSupplyStatuses();
+            StockGroupItems = new List<StockGroup>();// Data.GetStockGroups();
 
             return this;
         }

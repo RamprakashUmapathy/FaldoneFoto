@@ -52,7 +52,6 @@ namespace Web.Controllers
             {
                 Client = Client
             };
-            Client.DefaultRequestHeaders.Add("SHOPSIGN", model.ShopSignId);
 
             await model.Load(false);
             watch.Stop();
@@ -70,7 +69,6 @@ namespace Web.Controllers
 
             Client.RegisterForDispose(this.ControllerContext.HttpContext);
             model.Client = Client;
-            Client.DefaultRequestHeaders.Add("SHOPSIGN", model.ShopSignId);
             await model.Load(true);
             watch.Stop();
             _logger.LogInformation("{0} method executed in {1} seconds", "Home.Index(POST)", watch.Elapsed.TotalSeconds);

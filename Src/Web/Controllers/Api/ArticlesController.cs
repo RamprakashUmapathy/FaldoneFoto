@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Web;
 using Web.Extensions;
 
 namespace Web.Controllers.Api
@@ -44,53 +45,36 @@ namespace Web.Controllers.Api
             return articles;
         }
 
-        public async Task<IEnumerable<Category>> GetCategoriesAsync()
+        public async Task<IEnumerable<ShopSign>> GetShopSignsAsync()
         {
-            Stopwatch watch = new Stopwatch();
-            watch.Start();
-            var articles = new List<Article>();
-            int pageSize = int.MaxValue; // no paging needed for cache
-            var pageInfo = await _articleRepository.ListAllAsync(pageSize, 1);
-            articles.AddRange(pageInfo.Data);
-            for (int i = 2; i <= pageInfo.TotalPages; i++)
+
+            var categories = await GetArticleCategoriesAsync();
+            List<ShopSign> list = new List<ShopSign>();
+            var signs = new string[] { "KASANOVA", "KASANOVA+", "COIMPORT", "L'Outlet", "Casa sulla'albero", "Le Kikke", "E-Commerce" };
+            
+            foreach (string sign in signs)
             {
-                await _articleRepository.ListAllAsync(pageSize, i);
-                articles.AddRange(pageInfo.Data);
+                var stockGroups = GetStockGroupsFromShopSign(sign);
+                ShopSign shop = new ShopSign() { Id = sign };
+                var r = categories.Where(c => string.Join(',',stockGroups) == c.StockGroupId );
+                shop.Categories.AddRange(CategoriesCollection.BuildTree(r));
+                list.Add(shop);
             }
-            var stockGroups = new string[] { "KAS02", "KAS04", "KAS05" };
-            var categories = articles.DistinctBy(f => new
-            {
-                f.Category,
-                f.Family,
-                f.Series,
-                f.Level1,
-                f.Level2,
-                f.Style,
-                f.PriceListNames
-            })
-            .Where(f => f.StockGroups.Any(i => stockGroups.Contains(i.StockGroupId)))
-            .Select(f => new CategoriesCollection.ResultSet
-            {
-                CategoryId = f.Category,
-                FamilyId = f.Family,
-                SeriesId = f.Series,
-                Level1Id = f.Level1,
-                Level2Id = f.Level2,
-                PriceListId = f.PriceListNames,
-                StockGroupId = "",
-                StyleId = f.Style,
-                SupplyingStatusId = "",
-                TagId = f.TagName
-            });
-            var results = CategoriesCollection.BuildTree(categories);
-            watch.Stop();
-            _logger.LogInformation("{0} method executed in {1} seconds", MethodBase.GetCurrentMethod().Name, watch.Elapsed.TotalSeconds);
-            return results;
+            return list;
         }
 
-        public async Task<IEnumerable<Category>> GetCategoriesByIdAsync(string categoryId)
+        public async Task<IEnumerable<Category>> GetCategoriesAsync(string shopsignId)
         {
-            var categories = await GetCategoriesAsync();
+            var categories = await GetArticleCategoriesAsync();
+            var stockGroups = GetStockGroupsFromShopSign(shopsignId);
+            ShopSign shop = new ShopSign() { Id = shopsignId };
+            var r = categories.Where(c => string.Join(',', stockGroups) == c.StockGroupId);
+            return CategoriesCollection.BuildTree(r);
+        }
+
+        public async Task<IEnumerable<Category>> GetCategoriesByIdAsync(string shopsignId, string categoryId)
+        {
+            var categories = await GetCategoriesAsync(shopsignId);
             if (!string.IsNullOrEmpty(categoryId))
             {
                 return categories.Where(c => c.Id == categoryId);
@@ -98,15 +82,15 @@ namespace Web.Controllers.Api
             return categories;
         }
 
-        public async Task<IEnumerable<Family>> GetFamiliesAsync(string categoryId)
+        public async Task<IEnumerable<Family>> GetFamiliesAsync(string shopsignId, string categoryId)
         {
-            var results = await GetCategoriesByIdAsync(categoryId);
+            var results = await GetCategoriesByIdAsync(shopsignId, categoryId);
             return results.GetFamilies();
         }
 
-        public async Task<IEnumerable<Family>> GetFamiliesByIdAsync(string categoryId, string familyId)
+        public async Task<IEnumerable<Family>> GetFamiliesByIdAsync(string shopsignId, string categoryId, string familyId)
         {
-            var results = await GetFamiliesAsync(categoryId);
+            var results = await GetFamiliesAsync(shopsignId, categoryId);
             if (!string.IsNullOrEmpty(familyId))
             {
                 return results.Where(c => c.Id == familyId);
@@ -114,15 +98,15 @@ namespace Web.Controllers.Api
             return results;
         }
 
-        public async Task<IEnumerable<Series>> GetSeriesAsync(string categoryId, string familyId)
+        public async Task<IEnumerable<Series>> GetSeriesAsync(string shopsignId, string categoryId, string familyId)
         {
-            var results = await GetFamiliesByIdAsync(categoryId, familyId);
+            var results = await GetFamiliesByIdAsync(shopsignId, categoryId, familyId);
             return results.GetSeries();
         }
 
-        public async Task<IEnumerable<Series>> GetSeriesByIdAsync(string categoryId, string familyId, string seriesId)
+        public async Task<IEnumerable<Series>> GetSeriesByIdAsync(string shopsignId, string categoryId, string familyId, string seriesId)
         {
-            var results = await GetFamiliesByIdAsync(categoryId, familyId);
+            var results = await GetFamiliesByIdAsync(shopsignId, categoryId, familyId);
             if (!string.IsNullOrEmpty(seriesId))
             {
                 return results.GetSeries().Where(f => f.Id == seriesId);
@@ -130,31 +114,31 @@ namespace Web.Controllers.Api
             return results.GetSeries();
         }
 
-        public async Task<IEnumerable<Level1>> GetLevel1Async(string categoryId, string familyId, string seriesId)
+        public async Task<IEnumerable<Level1>> GetLevel1Async(string shopsignId, string categoryId, string familyId, string seriesId)
         {
-            var results = await GetSeriesByIdAsync(categoryId, familyId, seriesId);
+            var results = await GetSeriesByIdAsync(shopsignId, categoryId, familyId, seriesId);
             return results.GetLevel1s();
         }
 
-        public async Task<IEnumerable<Level1>> GetLevel1ByIdAsync(string categoryId, string familyId, string seriesId, string level1Id)
+        public async Task<IEnumerable<Level1>> GetLevel1ByIdAsync(string shopsignId, string categoryId, string familyId, string seriesId, string level1Id)
         {
-            var results = await GetSeriesByIdAsync(categoryId, familyId, seriesId);
+            var results = await GetSeriesByIdAsync(shopsignId, categoryId, familyId, seriesId);
             if (!string.IsNullOrEmpty(level1Id))
             {
-                return results.GetLevel1s().Where(l => l.Id == level1Id);
+                return results.GetLevel1s().Where(f => f.Id == level1Id);
             }
             return results.GetLevel1s();
         }
 
-        public async Task<IEnumerable<Level2>> GetLevel2Async(string categoryId, string familyId, string seriesId, string level1Id)
+        public async Task<IEnumerable<Level2>> GetLevel2Async(string shopsignId, string categoryId, string familyId, string seriesId, string level1Id)
         {
-            var results = await GetLevel1ByIdAsync(categoryId, familyId, seriesId, level1Id);
+            var results = await GetLevel1ByIdAsync(shopsignId, categoryId, familyId, seriesId, level1Id);
             return results.GetLevel2s();
         }
 
-        public async Task<IEnumerable<Level2>> GetLevel2ByIdAsync(string categoryId, string familyId, string seriesId, string level1Id, string level2Id)
+        public async Task<IEnumerable<Level2>> GetLevel2ByIdAsync(string shopsignId, string categoryId, string familyId, string seriesId, string level1Id, string level2Id)
         {
-            var results = await GetLevel1ByIdAsync(categoryId, familyId, seriesId, level1Id);
+            var results = await GetLevel1ByIdAsync(shopsignId, categoryId, familyId, seriesId, level1Id);
             if (!string.IsNullOrEmpty(level2Id))
             {
                 return results.GetLevel2s().Where(l => l.Id == level2Id);
@@ -162,15 +146,15 @@ namespace Web.Controllers.Api
             return results.GetLevel2s();
         }
 
-        public async Task<IEnumerable<Style>> GetStylesAsync(string categoryId, string familyId, string seriesId, string level1Id, string level2Id)
+        public async Task<IEnumerable<Style>> GetStylesAsync(string shopsignId, string categoryId, string familyId, string seriesId, string level1Id, string level2Id)
         {
-            var results = await GetLevel2ByIdAsync(categoryId, familyId, seriesId, level1Id, level2Id);
+            var results = await GetLevel2ByIdAsync(shopsignId, categoryId, familyId, seriesId, level1Id, level2Id);
             return results.GetStyles();
         }
 
-        public async Task<IEnumerable<Style>> GetStylesByIdAsync(string categoryId, string familyId, string seriesId, string level1Id, string level2Id, string styleId)
+        public async Task<IEnumerable<Style>> GetStylesByIdAsync(string shopsignId, string categoryId, string familyId, string seriesId, string level1Id, string level2Id, string styleId)
         {
-            var results = await GetLevel2ByIdAsync(categoryId, familyId, seriesId, level1Id, level2Id);
+            var results = await GetLevel2ByIdAsync(shopsignId, categoryId, familyId, seriesId, level1Id, level2Id);
             if (!string.IsNullOrEmpty(styleId))
             {
                 return results.GetStyles().Where(l => l.Id == styleId);
@@ -208,11 +192,10 @@ namespace Web.Controllers.Api
         //    return results.GetSupplyStatuses();
         //}
 
-
-        private IEnumerable<string> GetStockGroupsFromShopSign()
+        private IEnumerable<string> GetStockGroupsFromShopSign(string shopsignId)
         {
             List<string> list = new List<string>();
-            switch (Request.Headers["SHOPSIGN"])
+            switch (shopsignId)
             {
                 case "KASANOVA":
                     list.AddRange(new string[] { "KAS02", "KAS04", "KAS05" });
@@ -224,21 +207,59 @@ namespace Web.Controllers.Api
                     list.AddRange(new string[] { "COI01", "COI02", "COI03" });
                     break;
                 case "L'Outlet":
-                    list.AddRange(new string[] { "OUT01",});
+                    list.AddRange(new string[] { "OUT01", });
                     break;
                 case "Casa sulla'albero":
-                    list.AddRange(new string[] { "CSA01"});
+                    list.AddRange(new string[] { "CSA01" });
                     break;
                 case "Le Kikke":
                     list.AddRange(new string[] { "KAS03", "KAS04", "KAS05" });
                     break;
                 case "E-Commerce":
-                    list.AddRange(new string[] { "WEB01"});
+                    list.AddRange(new string[] { "WEB01" });
                     break;
                 default:
                     throw new NotSupportedException();
             }
             return list;
         }
+
+        private async Task<IEnumerable<CategoriesCollection.ResultSet>> GetArticleCategoriesAsync()
+        {
+            var articles = new List<Article>();
+            int pageSize = int.MaxValue; // no paging needed for cache
+            var pageInfo = await _articleRepository.ListAllAsync(pageSize, 1);
+            articles.AddRange(pageInfo.Data);
+            for (int i = 2; i <= pageInfo.TotalPages; i++)
+            {
+                await _articleRepository.ListAllAsync(pageSize, i);
+                articles.AddRange(pageInfo.Data);
+            }
+            var categories = articles.DistinctBy(f => new
+            {
+                f.Category,
+                f.Family,
+                f.Series,
+                f.Level1,
+                f.Level2,
+                f.Style,
+                f.PriceListNames
+            })
+            .Select(f => new CategoriesCollection.ResultSet
+            {
+                CategoryId = f.Category,
+                FamilyId = f.Family,
+                SeriesId = f.Series,
+                Level1Id = f.Level1,
+                Level2Id = f.Level2,
+                PriceListId = f.PriceListNames,
+                StockGroupId = f.StockGroupNames,
+                StyleId = f.Style,
+                SupplyingStatusId = "",
+                TagId = f.TagName
+            });
+            return categories;
+        }
+
     }
 }
