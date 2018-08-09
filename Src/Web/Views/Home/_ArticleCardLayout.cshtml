@@ -1,0 +1,62 @@
+﻿@using System.Web.UI.WebControls;
+@model IEnumerable<ArticleCardViewModel>
+@(Html.DevExpress()
+            .BootstrapCardView<ArticleCardViewModel>("ArticleCardView")
+            .KeyFieldName(m => m.Id)
+            .Columns(c =>
+            {
+                c.AddImageColumn(m => m.LargePhotoUrl)
+                    .PropertiesImage(p =>
+                    {
+                        p.ImageWidth(300);
+                        p.ImageHeight(300);
+                        p.ShowLoadingImage(true);
+                    });
+                c.Add(m => m.Description);
+                c.Add(m => m.Id);
+                c.AddImageColumn(m => m.Chalco)
+                    .PropertiesImage(p =>
+                    {
+                        p.ImageWidth(15);
+                        p.ImageHeight(15);
+                    });
+            })
+            .CardLayoutProperties(clp =>
+            {
+                clp.ShowItemCaptionColon(false);
+                clp.Items(i =>
+                {
+                    var col = i.Add(c => c.LargePhotoUrl);
+                    col.ColSpanSm(12);
+                    col.ShowCaption(false);
+                    col.HorizontalAlign(FormLayoutHorizontalAlign.Center);
+                });
+                clp.Items(i =>
+                {
+                    var col = i.Add(c => c.Description);
+                    col.ColSpanLg(12);
+                    col.ShowCaption(false);
+                });
+                clp.Items(i =>
+                {
+                    var col = i.Add(c => c.Id);
+                    col.ColSpanLg(6);
+                    col.ShowCaption(false);
+
+                });
+                clp.Items(i =>
+                {
+                    var col = i.Add(c => c.Chalco);
+                    col.ColSpanLg(2);
+                    col.ShowCaption(false);
+                });
+            })
+            .SettingsPager(p =>
+            {
+                p.ItemsPerPage(12);
+                p.EndlessPagingMode(CardViewEndlessPagingMode.OnScroll);
+                p.EnableAdaptivity(true);
+            })
+            .Bind(Model)
+            .SettingsText(a => a.EmptyCard(" "))
+)

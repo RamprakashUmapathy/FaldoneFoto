@@ -169,51 +169,21 @@
                         <div class="form-group">
                             <label class="small" for="StyleItems">Listino vendita</label>
                             <div>
-                                @(Html.DevExpress()
-                                                                                                .BootstrapListBoxFor(m => m.PriceListId)
-                                                                                                .TextField("Id")
-                                                                                                .ValueField("Id")
-                                                                                                .Caption("")
-                                                                                                .Bind(Model.PriceListItems)
-                                                                                                .EnableClientSideAPI(true)
-                                                                                                .EnableSelectAll(true)
-                                                                                                .SelectionMode(ListEditSelectionMode.CheckColumn)
-                                                                                                .FilteringSettings(f => f.ShowSearchUI(true).UseCompactView(true))
-                                )
+                                @Html.DropDownListFor(model => model.PriceListId, Model.PriceListItems, new { @class = "form-control", @multiple = "multiple" })
                             </div>
                         </div>
                         <label for="supplyStatus">Approvvigionamento</label>
                         <div class="form-group">
                             <label class="small" for="StyleItems">Listino vendita</label>
                             <div>
-                                @(Html.DevExpress()
-                                                                                                .BootstrapListBoxFor(m => m.SupplyStatusId)
-                                                                                                .TextField("Id")
-                                                                                                .ValueField("Id")
-                                                                                                .Caption("")
-                                                                                                .Bind(Model.SupplyStatusItems)
-                                                                                                .EnableClientSideAPI(true)
-                                                                                                .EnableSelectAll(true)
-                                                                                                .SelectionMode(ListEditSelectionMode.CheckColumn)
-                                                                                                .FilteringSettings(f => f.ShowSearchUI(true).UseCompactView(true))
-                                )
+                                @Html.DropDownListFor(model => model.SupplyStatusId, Model.SupplyStatusItems, new { @class = "form-control", @multiple = "multiple" })
                             </div>
                         </div>
                         <label for="assortment">Assortimenti</label>
                         <div class="form-group">
                             <label class="small" for="StyleItems">Assortimenti</label>
                             <div>
-                                @(Html.DevExpress()
-                                                                                                    .BootstrapListBoxFor(m => m.StockGroupId)
-                                                                                                    .TextField("Id")
-                                                                                                    .ValueField("Id")
-                                                                                                    .Caption("")
-                                                                                                    .Bind(Model.StockGroupItems)
-                                                                                                    .EnableClientSideAPI(true)
-                                                                                                    .EnableSelectAll(true)
-                                                                                                    .SelectionMode(ListEditSelectionMode.CheckColumn)
-                                                                                                    .FilteringSettings(f => f.ShowSearchUI(true).UseCompactView(true))
-                                )
+                                @Html.DropDownListFor(model => model.StockGroupId, Model.StockGroupItems, new { @class = "form-control", @multiple = "multiple" })
                             </div>
                         </div>
                         <div class="form-group">
@@ -226,32 +196,31 @@
                             <div class="row">
                                 <div class="col">
                                     @(Html.DevExpress()
-                                                                                                                    .BootstrapSpinEditFor(m => m.PriceRangeFrom)
-                                                                                                                    .AllowMouseWheel(false)
-                                                                                                                    .MinValue(0)
-                                                                                                                    .MaxValue(99999.99m)
-                                                                                                                    .DecimalPlaces(2)
-                                                                                                                    .NumberType(SpinEditNumberType.Float)
-                                                                                                                    .Increment(10)
-                                                                                                                    .Caption("Da :")
-                                                                                                                    .AllowNull(true)
-                                                                                                                    .SpinButtons(o => o.ShowIncrementButtons(false))
-                                                                                                                    .Value("")
+                                                    .BootstrapSpinEditFor(m => m.PriceRangeFrom)
+                                                    .AllowNull(true)
+                                                    .AllowMouseWheel(false)
+                                                    .DecimalPlaces(2)
+                                                    .NumberType(SpinEditNumberType.Float)
+                                                    .Increment(10)
+                                                    .Caption("Da :")
+                                                    .AllowNull(true)
+                                                    .SpinButtons(o => o.ShowIncrementButtons(false))
+                                                    .Value("")
                                     )
                                 </div>
                                 <div class="col">
                                     @(Html.DevExpress()
-                                                                                                                    .BootstrapSpinEditFor(m => m.PriceRangeTo)
-                                                                                                                    .AllowMouseWheel(false)
-                                                                                                                    .MinValue(0)
-                                                                                                                    .MaxValue(99999.99m)
-                                                                                                                    .Increment(10)
-                                                                                                                    .DecimalPlaces(2)
-                                                                                                                    .NumberType(SpinEditNumberType.Float)
-                                                                                                                    .Caption("a :")
-                                                                                                                    .AllowNull(true)
-                                                                                                                    .SpinButtons(o => o.ShowIncrementButtons(false))
-                                                                                                                    .Value("")
+                                                                                                                            .BootstrapSpinEditFor(m => m.PriceRangeTo)
+                                                                                                                            .AllowMouseWheel(false)
+                                                                                                                            .MinValue(0)
+                                                                                                                            .MaxValue(99999.99m)
+                                                                                                                            .Increment(10)
+                                                                                                                            .DecimalPlaces(2)
+                                                                                                                            .NumberType(SpinEditNumberType.Float)
+                                                                                                                            .Caption("a :")
+                                                                                                                            .AllowNull(true)
+                                                                                                                            .SpinButtons(o => o.ShowIncrementButtons(false))
+                                                                                                                            .Value("")
                                     )
                                 </div>
                             </div>
@@ -261,32 +230,31 @@
                             <div class="row">
                                 <div class="col">
                                     @(Html.DevExpress()
-                                                                                                                    .BootstrapSpinEditFor(m => m.DiscountFrom)
-                                                                                                                    .AllowMouseWheel(false)
-                                                                                                                    .MinValue(0)
-                                                                                                                    .MaxValue(99.99m)
-                                                                                                                    .DecimalPlaces(2)
-                                                                                                                    .NumberType(SpinEditNumberType.Float)
-                                                                                                                    .Increment(1)
-                                                                                                                    .Caption("Da :")
-                                                                                                                    .AllowNull(true)
-                                                                                                                    .SpinButtons(o => o.ShowIncrementButtons(false))
-                                                                                                                    .Value("")
+                                                                                                                            .BootstrapSpinEditFor(m => m.DiscountFrom)
+                                                                                                                            .AllowMouseWheel(false)
+                                                                                                                            .NullTextDisplayMode(NullTextDisplayMode.Unfocused)
+                                                                                                                            .DecimalPlaces(2)
+                                                                                                                            .NumberType(SpinEditNumberType.Float)
+                                                                                                                            .Increment(1)
+                                                                                                                            .Caption("Da :")
+                                                                                                                            .AllowNull(true)
+                                                                                                                            .SpinButtons(o => o.ShowIncrementButtons(false))
+                                                                                                                            .Value("")
                                     )
                                 </div>
                                 <div class="col">
                                     @(Html.DevExpress()
-                                                                                                                    .BootstrapSpinEditFor(m => m.DiscountTo)
-                                                                                                                    .AllowMouseWheel(false)
-                                                                                                                    .MinValue(0)
-                                                                                                                    .MaxValue(99.99m)
-                                                                                                                    .DecimalPlaces(2)
-                                                                                                                    .NumberType(SpinEditNumberType.Float)
-                                                                                                                    .Increment(1)
-                                                                                                                    .Caption("a :")
-                                                                                                                    .AllowNull(true)
-                                                                                                                    .SpinButtons(o => o.ShowIncrementButtons(false))
-                                                                                                                    .Value("")
+                                                                                                                            .BootstrapSpinEditFor(m => m.DiscountTo)
+                                                                                                                            .AllowMouseWheel(false)
+                                                                                                                            .MinValue(0)
+                                                                                                                            .MaxValue(99.99m)
+                                                                                                                            .DecimalPlaces(2)
+                                                                                                                            .NumberType(SpinEditNumberType.Float)
+                                                                                                                            .Increment(1)
+                                                                                                                            .Caption("a :")
+                                                                                                                            .AllowNull(true)
+                                                                                                                            .SpinButtons(o => o.ShowIncrementButtons(false))
+                                                                                                                            .Value("")
                                     )
                                 </div>
                             </div>
@@ -296,17 +264,17 @@
                             <div class="row">
                                 <div class="col">
                                     @(Html.DevExpress()
-                                                                                                                    .BootstrapSpinEditFor(m => m.StockQty)
-                                                                                                                    .AllowMouseWheel(false)
-                                                                                                                    .MinValue(0)
-                                                                                                                    .MaxValue(99999)
-                                                                                                                    .DecimalPlaces(2)
-                                                                                                                    .NumberType(SpinEditNumberType.Integer)
-                                                                                                                    .Increment(10)
-                                                                                                                    .Caption("")
-                                                                                                                    .AllowNull(true)
-                                                                                                                    .SpinButtons(o => o.ShowIncrementButtons(false))
-                                                                                                                    .Value("")
+                                                                                                                            .BootstrapSpinEditFor(m => m.StockQty)
+                                                                                                                            .AllowMouseWheel(false)
+                                                                                                                            .MinValue(0)
+                                                                                                                            .MaxValue(99999)
+                                                                                                                            .DecimalPlaces(2)
+                                                                                                                            .NumberType(SpinEditNumberType.Integer)
+                                                                                                                            .Increment(10)
+                                                                                                                            .Caption("")
+                                                                                                                            .AllowNull(true)
+                                                                                                                            .SpinButtons(o => o.ShowIncrementButtons(false))
+                                                                                                                            .Value("")
                                     )
                                 </div>
                             </div>
@@ -323,7 +291,7 @@
         <!-- Articles Start -->
         <div class="products-catagories-area clearfix">
             <div class="amado-pro-catagory clearfix">
-                <!-- Single Catagory -->
+                @*<!-- Single Catagory -->
                 <div class="single-products-catagory clearfix">
                     <a href="shop.html">
                         <img src="http://server-web01:8083/WSPhoto.ashx?Articolo=ACK010062NOC&amp;UseNoThumb=1" alt="">
@@ -378,7 +346,8 @@
                             <h4>Home Deco</h4>
                         </div>
                     </a>
-                </div>
+                </div>*@
+                @Html.Partial("_ArticleCardLayout.cshtml", Model.Articles)
             </div>
         </div>
         <!-- Articles End -->
@@ -469,7 +438,6 @@
                 var category = $("#CategoryId").val();
                 var family = $(this).val();
                 var uri = "/api/shopsigns/" + shopsign + "/categories/" + category + "/families/" + family + "/series";
-                alert(uri);
                 $.getJSON(uri)
                     .done(function (data) {
 
@@ -567,7 +535,10 @@
                     });
 
             });
-            $('#StyleId').multiselect();
+        $('#StyleId').multiselect();
+        $('#PriceListId').multiselect();
+        $('#SupplyStatusId').multiselect();
+        $('#StockGroupId').multiselect();
     });
     </script>
 }

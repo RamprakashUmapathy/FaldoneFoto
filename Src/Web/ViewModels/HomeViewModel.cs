@@ -1,9 +1,11 @@
-﻿using JsonExtensions;
+﻿using AutoMapper;
+using JsonExtensions;
 using Kasanova.FaldoneFoto.ApplicationCore.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
@@ -17,6 +19,8 @@ namespace Web.ViewModels
         public string EmptyItemText { get; private set; }
 
         public HttpClient Client { get; set; }
+
+        internal IMapper Mapper { get; set; }
 
         private IEnumerable<ShopSign> Data { get; set; }
 
@@ -93,15 +97,15 @@ namespace Web.ViewModels
 
         public string PriceListId { get; set; }
 
-        public IEnumerable<PriceList> PriceListItems { get; private set; }
+        public IEnumerable<SelectListItem> PriceListItems { get; private set; }
 
         public string SupplyStatusId { get; set; }
 
-        public IEnumerable<SupplyStatus> SupplyStatusItems { get; private set; }
+        public IEnumerable<SelectListItem> SupplyStatusItems { get; private set; }
 
         public string StockGroupId { get; set; }
 
-        public IEnumerable<StockGroup> StockGroupItems { get; private set; }
+        public IEnumerable<SelectListItem> StockGroupItems { get; private set; }
 
         public string TagId { get; set; }
 
@@ -111,6 +115,7 @@ namespace Web.ViewModels
 
         public IEnumerable<SelectListItem> StyleItems { get; private set; }
 
+        [Required(AllowEmptyStrings =true)]
         public double PriceRangeFrom { get; set; }
 
         public double PriceRangeTo { get; set; }
@@ -123,15 +128,18 @@ namespace Web.ViewModels
 
         public bool IsCardView { get; set; }
 
-        //public List<ArticleLightViewModel> Articles { get; set; }
+        public List<ArticleCardViewModel> Articles { get; set; }
+
+        public string PhotoBaseUrl { get; set; }
 
         public HomeViewModel()
         {
             Data = new List<ShopSign>();
+            Articles = new List<ArticleCardViewModel>();
             IsCardView = true;
         }
 
-        public async Task<HomeViewModel> Load(bool post)
+        public async Task<HomeViewModel> Load(bool isPostBack)
         {
             string emptyItemText = await GetItem("EmptyItemSelect");
             var emptyItem = new SelectListItem() { Text = emptyItemText, Value = "" };
@@ -167,10 +175,44 @@ namespace Web.ViewModels
             PhotoItems = await GetItems("HasPhoto", PhotoId, emptyItem);
             ColorItems = await GetItems("Color", ColorId, emptyItem);
             StyleItems = Data.GetStyles().ToSelectListItems(StyleId); //.ToSelectListItems(StyleId, emptyItem);
-            PriceListItems = new List<PriceList>();  //Data.GetPriceLists();
-            SupplyStatusItems = new List<SupplyStatus>(); //Data.GetSupplyStatuses();
-            StockGroupItems = new List<StockGroup>();// Data.GetStockGroups();
+            PriceListItems = new List<SelectListItem>();  //Data.GetPriceLists();
+            SupplyStatusItems = new List<SelectListItem>(); //Data.GetSupplyStatuses();
+            StockGroupItems = new List<SelectListItem>();// Data.GetStockGroups();
 
+            if (isPostBack == true)
+            {
+                //Load Articles
+                //{ shopsignid}/{ categoryid}/{familyid?}/{seriesid?}/{level1id?}/{level2id?}/{styleid?}
+                string uri = $"articles/{ShopSignId}";
+                if(!String.IsNullOrEmpty(CategoryId))
+                     uri = uri + $"/{CategoryId}";
+                if (!String.IsNullOrEmpty(FamilyId))
+                    uri = uri + $"/{FamilyId}";
+                if (!String.IsNullOrEmpty(SeriesId))
+                    uri = uri + $"/{SeriesId}";
+                if (!String.IsNullOrEmpty(Level1Id))
+                    uri = uri + $"/{Level1Id}";
+                if (!String.IsNullOrEmpty(Level2Id))
+                    uri = uri + $"/{Level2Id}";
+                if (!String.IsNullOrEmpty(StyleId))
+                    uri = uri + $"/{StyleId}";
+
+                using (HttpResponseMessage response = await Client.GetAsync(uri))
+                {
+                    response.EnsureSuccessStatusCode();
+                    var data = await response.Content.ReadAsStringAsync();
+                    var settings = new JsonSerializerSettings
+                    {
+                        ContractResolver = new PrivateSetterContractResolver()
+                    };
+                    var articles = JsonConvert.DeserializeObject<List<ChalcoArticle>>(data, settings);
+                    articles.ForEach(a =>
+                    {
+                        var vm = Mapper.Map<ChalcoArticle, ArticleCardViewModel>(a);
+                        Articles.Add(vm);
+                    });
+                }
+            }
             return this;
         }
 

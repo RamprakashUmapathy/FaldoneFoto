@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
     <PackageReference Include="DevExpress.AspNetCore.Bootstrap" Version="17.2.2-beta*" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.1.1" />

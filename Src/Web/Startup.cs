@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Kasanova.FaldoneFoto.Infrastructure.Data;
 using Kasanova.Common.ApplicationCore.Interfaces;
 using Infrastructure.Logging;
+using AutoMapper;
 
 namespace DevExpressStarterProject
 {
@@ -36,6 +37,7 @@ namespace DevExpressStarterProject
             services.AddScoped<IKeyItemValueRepository, KeyItemValueRepository>();
             services.AddScoped<IArticleRepository, ArticleRepositoryCache>();
 
+            services.AddAutoMapper();
             services.AddMvc();
             services.AddDevExpressControls();
         }
@@ -165,7 +167,7 @@ namespace DevExpressStarterProject
                     });
 
                 routes.MapRoute(name: "ArticleApi",
-                    template: "api/articles/{categoryid?}/{familyid?}/{seriesid?}/{level1id?}/{level2id?}",
+                    template: "api/articles/{shopsignid}/{categoryid}/{familyid?}/{seriesid?}/{level1id?}/{level2id?}/{styleid?}",
                     defaults: new
                     {
                         controller = "Articles",

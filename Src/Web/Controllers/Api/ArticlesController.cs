@@ -28,42 +28,65 @@ namespace Web.Controllers.Api
             _itemValueRepository = itemValueRepository ?? throw new ArgumentNullException(nameof(itemValueRepository));
         }
 
-        public async Task<IEnumerable<Article>> GetArticlesAsync(string categoryId, string familyId, string seriesId, string level1Id, string level2Id)
+        /// <summary>
+        /// GET : api/articles/{shopsignid}/{categoryid}/{familyid?}/{seriesid?}/{level1id?}/{level2id?}/{styleid?}
+        /// </summary>
+        /// <param name="shopsignId"></param>
+        /// <param name="categoryId"></param>
+        /// <param name="familyId"></param>
+        /// <param name="seriesId"></param>
+        /// <param name="level1Id"></param>
+        /// <param name="level2Id"></param>
+        /// <param name="styleid"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<Article>> GetArticlesAsync([FromRoute]string shopsignId, [FromRoute]string categoryId, [FromRoute]string familyId, [FromRoute]string seriesId, [FromRoute]string level1Id, [FromRoute]string level2Id, [FromRoute]string styleid)
         {
             Stopwatch watch = new Stopwatch();
             watch.Start();
+
+            var stockGroups = GetStockGroupsFromShopSign(shopsignId);
+
             var cache = (ArticleRepositoryCache)_articleRepository;
             var articles = await cache.ListAsync(f =>
                 (string.IsNullOrEmpty(categoryId) || f.Category == categoryId) &&
                 (string.IsNullOrEmpty(familyId) || f.Family == familyId) &&
                 (string.IsNullOrEmpty(seriesId) || f.Series == seriesId) &&
                 (string.IsNullOrEmpty(level1Id) || f.Level1 == level1Id) &&
-                (string.IsNullOrEmpty(level2Id) || f.Level2 == level2Id)
-            );
+                (string.IsNullOrEmpty(level2Id) || f.Level2 == level2Id) &&
+                f.StockGroups.Any(s => stockGroups.Contains(s.StockGroupId)));
             watch.Stop();
             _logger.LogInformation("{0} method executed in {1} seconds", "Get with parameters", watch.Elapsed.TotalSeconds);
             return articles;
         }
 
+        /// <summary>
+        /// GET : api/shopsigns
+        /// </summary>
+        /// <returns></returns>
         public async Task<IEnumerable<ShopSign>> GetShopSignsAsync()
         {
 
             var categories = await GetArticleCategoriesAsync();
             List<ShopSign> list = new List<ShopSign>();
             var signs = new string[] { "KASANOVA", "KASANOVA+", "COIMPORT", "L'Outlet", "Casa sulla'albero", "Le Kikke", "E-Commerce" };
-            
+
             foreach (string sign in signs)
             {
                 var stockGroups = GetStockGroupsFromShopSign(sign);
                 ShopSign shop = new ShopSign() { Id = sign };
-                var r = categories.Where(c => string.Join(',',stockGroups) == c.StockGroupId );
+                var r = categories.Where(c => string.Join(',', stockGroups) == c.StockGroupId);
                 shop.Categories.AddRange(CategoriesCollection.BuildTree(r));
                 list.Add(shop);
             }
             return list;
         }
 
-        public async Task<IEnumerable<Category>> GetCategoriesAsync(string shopsignId)
+        /// <summary>
+        /// GET : api/shopsigns/{shopsignid}/categories
+        /// </summary>
+        /// <param name="shopsignId">shop sign id to extract</param>
+        /// <returns></returns>
+        public async Task<IEnumerable<Category>> GetCategoriesAsync([FromRoute] string shopsignId)
         {
             var categories = await GetArticleCategoriesAsync();
             var stockGroups = GetStockGroupsFromShopSign(shopsignId);
@@ -72,7 +95,13 @@ namespace Web.Controllers.Api
             return CategoriesCollection.BuildTree(r);
         }
 
-        public async Task<IEnumerable<Category>> GetCategoriesByIdAsync(string shopsignId, string categoryId)
+        /// <summary>
+        /// GET : api/shopsigns/{shopsignid}/categories/{categoryId}
+        /// </summary>
+        /// <param name="shopsignId">shop sign id to extract</param>
+        /// <param name="categoryId">category id</param>
+        /// <returns></returns>
+        public async Task<IEnumerable<Category>> GetCategoriesByIdAsync([FromRoute] string shopsignId, [FromRoute]  string categoryId)
         {
             var categories = await GetCategoriesAsync(shopsignId);
             if (!string.IsNullOrEmpty(categoryId))
@@ -82,13 +111,26 @@ namespace Web.Controllers.Api
             return categories;
         }
 
-        public async Task<IEnumerable<Family>> GetFamiliesAsync(string shopsignId, string categoryId)
+        /// <summary>
+        /// GET : api/shopsigns/{shopsignid}/categories/{categoryid}/families
+        /// </summary>
+        /// <param name="shopsignId"></param>
+        /// <param name="categoryId"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<Family>> GetFamiliesAsync([FromRoute] string shopsignId, [FromRoute] string categoryId)
         {
             var results = await GetCategoriesByIdAsync(shopsignId, categoryId);
             return results.GetFamilies();
         }
 
-        public async Task<IEnumerable<Family>> GetFamiliesByIdAsync(string shopsignId, string categoryId, string familyId)
+        /// <summary>
+        /// GET : api/shopsigns/{shopsignid}/categories/{categoryid}/families/{familyid}
+        /// </summary>
+        /// <param name="shopsignId"></param>
+        /// <param name="categoryId"></param>
+        /// <param name="familyId"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<Family>> GetFamiliesByIdAsync([FromRoute] string shopsignId, [FromRoute] string categoryId, [FromRoute] string familyId)
         {
             var results = await GetFamiliesAsync(shopsignId, categoryId);
             if (!string.IsNullOrEmpty(familyId))
@@ -98,13 +140,28 @@ namespace Web.Controllers.Api
             return results;
         }
 
-        public async Task<IEnumerable<Series>> GetSeriesAsync(string shopsignId, string categoryId, string familyId)
+        /// <summary>
+        /// GET : api/shopsigns/{shopsignid}/categories/{categoryid}/families/{familyid}/series
+        /// </summary>
+        /// <param name="shopsignId"></param>
+        /// <param name="categoryId"></param>
+        /// <param name="familyId"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<Series>> GetSeriesAsync([FromRoute] string shopsignId, [FromRoute] string categoryId, [FromRoute] string familyId)
         {
             var results = await GetFamiliesByIdAsync(shopsignId, categoryId, familyId);
             return results.GetSeries();
         }
 
-        public async Task<IEnumerable<Series>> GetSeriesByIdAsync(string shopsignId, string categoryId, string familyId, string seriesId)
+        /// <summary>
+        /// GET : api/shopsigns/{shopsignid}/categories/{categoryid}/families/{familyid}/series/{seriesid}
+        /// </summary>
+        /// <param name="shopsignId"></param>
+        /// <param name="categoryId"></param>
+        /// <param name="familyId"></param>
+        /// <param name="seriesId"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<Series>> GetSeriesByIdAsync([FromRoute] string shopsignId, [FromRoute] string categoryId, [FromRoute] string familyId, [FromRoute] string seriesId)
         {
             var results = await GetFamiliesByIdAsync(shopsignId, categoryId, familyId);
             if (!string.IsNullOrEmpty(seriesId))
@@ -114,12 +171,29 @@ namespace Web.Controllers.Api
             return results.GetSeries();
         }
 
-        public async Task<IEnumerable<Level1>> GetLevel1Async(string shopsignId, string categoryId, string familyId, string seriesId)
+        /// <summary>
+        /// GET : api/shopsigns/{shopsignid}/categories/{categoryid}/families/{familyid}/series/{seriesid}/level1
+        /// </summary>
+        /// <param name="shopsignId"></param>
+        /// <param name="categoryId"></param>
+        /// <param name="familyId"></param>
+        /// <param name="seriesId"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<Level1>> GetLevel1Async([FromRoute] string shopsignId, [FromRoute] string categoryId, [FromRoute] string familyId, [FromRoute] string seriesId)
         {
             var results = await GetSeriesByIdAsync(shopsignId, categoryId, familyId, seriesId);
             return results.GetLevel1s();
         }
 
+        /// <summary>
+        /// GET : api/shopsigns/{shopsignid}/categories/{categoryid}/families/{familyid}/series/{seriesid}/level1/{level1id}
+        /// </summary>
+        /// <param name="shopsignId"></param>
+        /// <param name="categoryId"></param>
+        /// <param name="familyId"></param>
+        /// <param name="seriesId"></param>
+        /// <param name="level1Id"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<Level1>> GetLevel1ByIdAsync(string shopsignId, string categoryId, string familyId, string seriesId, string level1Id)
         {
             var results = await GetSeriesByIdAsync(shopsignId, categoryId, familyId, seriesId);
@@ -130,12 +204,31 @@ namespace Web.Controllers.Api
             return results.GetLevel1s();
         }
 
+        /// <summary>
+        /// GET : api/shopsigns/{shopsignid}/categories/{categoryid}/families/{familyid}/series/{seriesid}/level1/{level1id}/level2
+        /// </summary>
+        /// <param name="shopsignId"></param>
+        /// <param name="categoryId"></param>
+        /// <param name="familyId"></param>
+        /// <param name="seriesId"></param>
+        /// <param name="level1Id"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<Level2>> GetLevel2Async(string shopsignId, string categoryId, string familyId, string seriesId, string level1Id)
         {
             var results = await GetLevel1ByIdAsync(shopsignId, categoryId, familyId, seriesId, level1Id);
             return results.GetLevel2s();
         }
 
+        /// <summary>
+        /// GET api/shopsigns/{shopsignid}/categories/{categoryid}/families/{familyid}/series/{seriesid}/level1/{level1id}/level2/{level2id}
+        /// </summary>
+        /// <param name="shopsignId"></param>
+        /// <param name="categoryId"></param>
+        /// <param name="familyId"></param>
+        /// <param name="seriesId"></param>
+        /// <param name="level1Id"></param>
+        /// <param name="level2Id"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<Level2>> GetLevel2ByIdAsync(string shopsignId, string categoryId, string familyId, string seriesId, string level1Id, string level2Id)
         {
             var results = await GetLevel1ByIdAsync(shopsignId, categoryId, familyId, seriesId, level1Id);
@@ -146,12 +239,33 @@ namespace Web.Controllers.Api
             return results.GetLevel2s();
         }
 
+        /// <summary>
+        /// GET : api/categories/{categoryid}/families/{familyid}/series/{seriesid}/level1/{level1id}/level2/{level2id}/styles
+        /// </summary>
+        /// <param name="shopsignId"></param>
+        /// <param name="categoryId"></param>
+        /// <param name="familyId"></param>
+        /// <param name="seriesId"></param>
+        /// <param name="level1Id"></param>
+        /// <param name="level2Id"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<Style>> GetStylesAsync(string shopsignId, string categoryId, string familyId, string seriesId, string level1Id, string level2Id)
         {
             var results = await GetLevel2ByIdAsync(shopsignId, categoryId, familyId, seriesId, level1Id, level2Id);
             return results.GetStyles();
         }
 
+        /// <summary>
+        /// GET : api/categories/{categoryid}/families/{familyid}/series/{seriesid}/level1/{level1id}/level2/{level2id}/styles/{styleid}
+        /// </summary>
+        /// <param name="shopsignId"></param>
+        /// <param name="categoryId"></param>
+        /// <param name="familyId"></param>
+        /// <param name="seriesId"></param>
+        /// <param name="level1Id"></param>
+        /// <param name="level2Id"></param>
+        /// <param name="styleId"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<Style>> GetStylesByIdAsync(string shopsignId, string categoryId, string familyId, string seriesId, string level1Id, string level2Id, string styleId)
         {
             var results = await GetLevel2ByIdAsync(shopsignId, categoryId, familyId, seriesId, level1Id, level2Id);
@@ -191,6 +305,8 @@ namespace Web.Controllers.Api
         //    }
         //    return results.GetSupplyStatuses();
         //}
+
+        #region private methods
 
         private IEnumerable<string> GetStockGroupsFromShopSign(string shopsignId)
         {
@@ -260,6 +376,8 @@ namespace Web.Controllers.Api
             });
             return categories;
         }
+
+        #endregion
 
     }
 }
