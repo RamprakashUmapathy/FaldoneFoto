@@ -7,6 +7,9 @@ using Kasanova.FaldoneFoto.Infrastructure.Data;
 using Kasanova.Common.ApplicationCore.Interfaces;
 using Infrastructure.Logging;
 using AutoMapper;
+using Kasanova.FaldoneFoto.ApplicationCore.Entities;
+using Web.ViewModels;
+using Microsoft.AspNetCore.Localization;
 
 namespace DevExpressStarterProject
 {
@@ -37,9 +40,20 @@ namespace DevExpressStarterProject
             services.AddScoped<IKeyItemValueRepository, KeyItemValueRepository>();
             services.AddScoped<IArticleRepository, ArticleRepositoryCache>();
 
-            services.AddAutoMapper();
             services.AddMvc();
+
+            //AutoMapper
+            services.AddAutoMapper();
+
+            //DevExpress Controls
             services.AddDevExpressControls();
+
+            //Culture
+            services.Configure<RequestLocalizationOptions>(opt =>
+            {
+                var defCulture = new RequestCulture("it-IT", "it-IT");
+                opt.DefaultRequestCulture = new RequestCulture("it-IT", "it-IT");
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -63,10 +63,6 @@ namespace Kasanova.FaldoneFoto.ApplicationCore.Entities
 
         public bool InMagento { get; private set; }
 
-        public bool InAmazon { get ; private set; }
-
-        public bool InEBay { get; private set; }
-
         public int StockQuantity { get; private set; }
 
         public int MasterQuantity { get; private set; }
@@ -85,6 +81,12 @@ namespace Kasanova.FaldoneFoto.ApplicationCore.Entities
         public IEnumerable<SupplyStatus> SupplyStatuses { get; private set; }
 
         public string TagName { get; private set; }
+
+        public decimal GrossRetailPrice { get; private set; }
+
+        public decimal NetRetailPrice { get; private set; }
+
+        public decimal? RetailDiscountPercentage { get; private set; }
 
         public Article()
         {

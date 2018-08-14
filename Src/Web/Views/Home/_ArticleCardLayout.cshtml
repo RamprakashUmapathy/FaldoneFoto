@@ -1,62 +1,145 @@
 ﻿@using System.Web.UI.WebControls;
 @model IEnumerable<ArticleCardViewModel>
 @(Html.DevExpress()
-            .BootstrapCardView<ArticleCardViewModel>("ArticleCardView")
-            .KeyFieldName(m => m.Id)
-            .Columns(c =>
-            {
-                c.AddImageColumn(m => m.LargePhotoUrl)
-                    .PropertiesImage(p =>
-                    {
-                        p.ImageWidth(300);
-                        p.ImageHeight(300);
-                        p.ShowLoadingImage(true);
-                    });
-                c.Add(m => m.Description);
-                c.Add(m => m.Id);
-                c.AddImageColumn(m => m.Chalco)
-                    .PropertiesImage(p =>
-                    {
-                        p.ImageWidth(15);
-                        p.ImageHeight(15);
-                    });
-            })
-            .CardLayoutProperties(clp =>
-            {
-                clp.ShowItemCaptionColon(false);
-                clp.Items(i =>
+        .BootstrapCardView<ArticleCardViewModel>("ArticleCardView")
+        .KeyFieldName(m => m.Id)
+        .Columns(c =>
+        {
+            c.AddImageColumn(m => m.LargePhotoUrl)
+                .PropertiesImage(p =>
                 {
-                    var col = i.Add(c => c.LargePhotoUrl);
-                    col.ColSpanSm(12);
-                    col.ShowCaption(false);
-                    col.HorizontalAlign(FormLayoutHorizontalAlign.Center);
+                    p.ImageWidth(300);
+                    p.ImageHeight(300);
+                    p.ShowLoadingImage(true);
                 });
-                clp.Items(i =>
+            c.Add(m => m.Description);
+            c.Add(m => m.Id);
+            c.AddImageColumn(m => m.Chalco)
+                .PropertiesImage(p =>
                 {
-                    var col = i.Add(c => c.Description);
-                    col.ColSpanLg(12);
-                    col.ShowCaption(false);
+                    p.ImageWidth(15);
+                    p.ImageHeight(15);
                 });
-                clp.Items(i =>
-                {
-                    var col = i.Add(c => c.Id);
-                    col.ColSpanLg(6);
-                    col.ShowCaption(false);
+        })
+        .CardLayoutProperties(clp =>
+        {
+            clp.Items(i =>
+            {
+                var ci = i.AddCommandItem();
+                ci.ShowSelectCheckbox(true);
+                ci.HorizontalAlign(FormLayoutHorizontalAlign.Right);
+            });
+        })
+        .Toolbars(tb =>
+        {
+            tb.Add().Items(i =>
+            {
+                i.Add().Command(BootstrapCardViewToolbarCommand.Custom)
+                        .Name("SelectAll")
+                        .Text("Select All")
+                        .NavigateUrl(Url.Action("ToolbarSelection", "Home"));
+            });
+        })
+        .SettingsPager(pager => pager
+            .ItemsPerPage(15)
+            .NumericButtonCount(4)
+            .PageSizeItemSettings(pageSize => pageSize
+                .Visible(false))
+            //.Items("24", "36"))
+            .EnableAdaptivity(true)
+            )
+        .Templates(t =>
+            t.Card(c =>
+            @<text>
+                @{
+                    ArticleCardViewModel data = @c.DataItem as ArticleCardViewModel;
+                }
+                <div class="card border-light" onclick="javascript:selectElement(this)">
+                    <div data-toggle="cardview-card-selecteditor">
+                        <input type="checkbox" id="cb_@data.Id" name="cb_@data.Id" value="@data.Id" />
+                    </div>
+                    <figure class="figure">
+                        <div class="text-center">
+                            <img src="@data.PhotoUrl" class="figure-img img-fluid rounded" alt="@data.Description">
+                            <figcaption class="figure-caption">@data.Description</figcaption>
+                        </div>
+                    </figure>
+                    <table class="table table-sm table-borderless">
+                        <thead>
+                            <tr>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-secondary">@data.Id</td>
+                                <td>
+                                    <table class="table table-sm table-borderless">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    @if (@data.HasPhotoInChalco)
+                                                                {
+                                                        <img src="~/images/camera.png" alt="foto in chalco" />
+                                                                }
+                                                </td>
+                                                <td>
+                                                    @if (@data.IsPrivateLabel)
+                                                                {
+                                                        <img src="~/images/privatelabel.png" alt="private label" />
+                                                                }
+                                                </td>
+                                                <td>
+                                                    @if (@data.IsDirectDelivery)
+                                                                {
+                                                        <img src="~/images/delivery.png" alt="Direct delivery" />
+                                                                }
+                                                </td>
+                                                <td>
+                                                    @if (@data.HasVideo)
+                                                                {
+                                                        <a href="@data.Youtube" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true">
+                                                            <img src="~/images/video.png" alt="You tube video" />
+                                                        </a>
+                                                                }
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-secondary">@data.Dimensions</td>
+                                <td class="text-secondary">@data.WeightInString</td>
+                            </tr>
+                            <tr>
+                                <td class="text-secondary"><i>@data.Materials</td>
+                                <td>@data.PurchasePrice</td>
+                            </tr>
+                            <tr>
+                                <td class="text-success"><small><i>@data.Line</i></small></td>
+                                <td class="text-primary"><b>@data.GrossPrice</b></td>
+                            </tr>
+                            <tr>
+                                <td>@data.StockArrivalDate</td>
+                                <td class="text-danger">sc: @data.DiscountPercent</td>
+                            </tr>
+                            <tr>
+                                <td>@data.StockArrivalQty</td>
+                                <td><b>@data.NetPrice</b></td>
+                            </tr>
 
-                });
-                clp.Items(i =>
-                {
-                    var col = i.Add(c => c.Chalco);
-                    col.ColSpanLg(2);
-                    col.ShowCaption(false);
-                });
-            })
-            .SettingsPager(p =>
-            {
-                p.ItemsPerPage(12);
-                p.EndlessPagingMode(CardViewEndlessPagingMode.OnScroll);
-                p.EnableAdaptivity(true);
-            })
-            .Bind(Model)
-            .SettingsText(a => a.EmptyCard(" "))
+                        </tbody>
+                    </table>
+                </div>
+            </text>))
+                    .Bind(Model)
+                    //.SettingsText(a => a.EmptyCard(" ")) // suppress no data to display message
+                    .SettingsBehavior(s => s.AllowSelectByCardClick(false))
+                    .Routes(routes => routes
+                            .MapRoute(r => r
+                                .Action("PartialBinding")
+                                .Controller("Home")))
+
 )

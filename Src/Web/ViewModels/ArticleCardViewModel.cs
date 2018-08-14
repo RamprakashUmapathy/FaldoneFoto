@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Web.ViewModels
 {
 
-    public class ArticleCardViewModel 
+    public class ArticleCardViewModel
     {
 
         private const string PhotoBaseUrl = "http://192.168.146.249:10081/GetItemPhoto.ashx?CodiceArticolo={0}";
@@ -27,30 +27,32 @@ namespace Web.ViewModels
 
         public string LargePhotoUrl { get { return string.Concat(PhotoUrl, "&", "UseNoThumb=1"); } }
 
-        public double Height { get; private set; }
+        public float Height { get; private set; }
 
-        public double Depth { get; private set; }
+        public float Depth { get; private set; }
 
-        public double Width { get; private set; }
+        public float Width { get; private set; }
 
-        public double Weight { get; private set; }
+        public float Weight { get; private set; }
 
         public bool HasPhotoInChalco { get; private set; }
 
-        public string PurchasePrice { get { return "List Acq. € 9,86"; } }
+        public string PurchasePrice { get; private set; }
 
-        public string Price { get { return "€ 29,00"; } }
+        public string GrossPrice { get { return string.Format("€ {0:N2}", GrossRetailPrice); } }
 
-        public string NetPrice { get { return "€ 16,86"; } }
+        public string NetPrice { get { return string.Format("€ {0:N2}", NetRetailPrice); } }
 
-        public string DiscountPercent { get { return " 40,00%"; } }
+        public string DiscountPercent
+        {
+            get { return RetailDiscountPercentage.GetValueOrDefault(0).ToString("P2"); }
+        }
 
         public string StockArrivalDate { get; private set; }
 
         public string StockArrivalQty { get; private set; }
 
-        public string YoutubeVideo { get; private set; }
-
+        public string Youtube { get; private set; }
 
         public string Chalco
         {
@@ -109,18 +111,22 @@ namespace Web.ViewModels
             {
                 if (!_hasVideo.HasValue)
                 {
-                    _hasVideo = YoutubeVideo != null && YoutubeVideo.Length > 0;
+                    _hasVideo = Youtube != null && Youtube.Length > 0;
                 }
                 return _hasVideo.Value;
             }
         }
 
-        public string Video { get { return HasVideo ? "~/Images/video.png" : ""; } }
-
         public bool IsDirectDelivery { get; private set; }
-        public string DirectDelivery { get { return IsDirectDelivery ? "~/Images/delivery.png" : ""; } }
 
         public bool IsPrivateLabel { get; private set; }
-        public string PrivateLabel { get { return IsPrivateLabel ? "~/Images/privatelabel.png" : ""; } }
+
+        public decimal GrossRetailPrice { get; private set; }
+
+        public decimal? RetailDiscountPercentage { get; private set; }
+
+        public decimal NetRetailPrice { get; private set; }
+
+
     }
 }

@@ -115,7 +115,6 @@ namespace Web.ViewModels
 
         public IEnumerable<SelectListItem> StyleItems { get; private set; }
 
-        [Required(AllowEmptyStrings =true)]
         public double PriceRangeFrom { get; set; }
 
         public double PriceRangeTo { get; set; }
@@ -139,12 +138,13 @@ namespace Web.ViewModels
             IsCardView = true;
         }
 
-        public async Task<HomeViewModel> Load(bool isPostBack)
+        public async Task<HomeViewModel> LoadAsync(bool isPostBack)
         {
             string emptyItemText = await GetItem("EmptyItemSelect");
             var emptyItem = new SelectListItem() { Text = emptyItemText, Value = "" };
             EmptyItemText = emptyItemText;
 
+            //Load combo shop signs
             ShopSigns = await GetItems("ShopSigns", ShopSignId, emptyItem);
 
             using (HttpResponseMessage response = await Client.GetAsync("shopsigns"))
@@ -196,7 +196,7 @@ namespace Web.ViewModels
                     uri = uri + $"/{Level2Id}";
                 if (!String.IsNullOrEmpty(StyleId))
                     uri = uri + $"/{StyleId}";
-
+                
                 using (HttpResponseMessage response = await Client.GetAsync(uri))
                 {
                     response.EnsureSuccessStatusCode();

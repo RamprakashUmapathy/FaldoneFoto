@@ -10,7 +10,7 @@ namespace Web
 {
     public class MappingProfile : Profile
     {
-        public MappingProfile()
+        public MappingProfile() : base()
         {
             CreateMap<ChalcoArticle, ArticleCardViewModel>();
         }

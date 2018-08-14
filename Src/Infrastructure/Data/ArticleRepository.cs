@@ -62,8 +62,7 @@ namespace Kasanova.FaldoneFoto.Infrastructure.Data
                 var stockGroups = await gridReader.ReadAsync<Kasanova.ApplicationCore.Entities.StockGroup>();
                 foreach (Kasanova.ApplicationCore.Entities.StockGroup stockGroup in stockGroups)
                 {
-                    ChalcoArticle article = null;
-                    if (articleDict.TryGetValue(stockGroup.ArticleId, out article))
+                    if (articleDict.TryGetValue(stockGroup.ArticleId, out ChalcoArticle article))
                     {
                         article.StockGroups.Add(stockGroup);
                     }
@@ -71,8 +70,7 @@ namespace Kasanova.FaldoneFoto.Infrastructure.Data
                 var priceLists = await gridReader.ReadAsync<PriceList>();
                 foreach (PriceList pl in priceLists)
                 {
-                    ChalcoArticle article = null;
-                    if (articleDict.TryGetValue(pl.ArticleId, out article))
+                    if (articleDict.TryGetValue(pl.ArticleId, out ChalcoArticle article))
                     {
                         article.PriceLists.Add(pl);
                     }
@@ -84,18 +82,20 @@ namespace Kasanova.FaldoneFoto.Infrastructure.Data
 
         public async Task<PaginationInfo<ChalcoArticle>> ListAsync(dynamic parameters, int pageSize, int pageNumber)
         {
-            using (var conn = DataContext.CreateConnection())
-            {
-                conn.Open();
-                string spName = "faldone.ArticlesList";
-                var gridReader = await conn.QueryMultipleAsync(spName
-                                                                , (object)parameters
-                                                               , commandType: CommandType.StoredProcedure);
+            await Task.Delay(1);
+            throw new NotImplementedException();
+            //using (var conn = DataContext.CreateConnection())
+            //{
+            //    conn.Open();
+            //    string spName = "faldone.ArticlesList";
+            //    var gridReader = await conn.QueryMultipleAsync(spName
+            //                                                    , (object)parameters
+            //                                                   , commandType: CommandType.StoredProcedure);
 
-                var results = await gridReader.ReadAsync<ChalcoArticle>();
-                var recordCount = gridReader.Read<int>().First();
-                return PaginationInfo<ChalcoArticle>(pageSize, pageNumber, recordCount, results);
-            }
+            //    var results = await gridReader.ReadAsync<ChalcoArticle>();
+            //    var recordCount = gridReader.Read<int>().First();
+            //    return PaginationInfo<ChalcoArticle>(pageSize, pageNumber, recordCount, results);
+            //}
         }
 
         public Task UpdateAsync(ChalcoArticle entity)
